@@ -31,6 +31,15 @@ export function validateWorkspace(data) {
       CONTACT_FIELDS.some((k) => typeof r.contact[k] !== "string")
     )
       throw new Error("Invalid resume in backup.");
+    if (
+      r.original &&
+      (!/^[a-f0-9]{64}\.(pdf|docx|txt)$/.test(r.original.id) ||
+        typeof r.original.filename !== "string" ||
+        !Number.isSafeInteger(r.original.size) ||
+        r.original.size < 0 ||
+        r.original.size > 15 * 1024 * 1024)
+    )
+      throw new Error("Invalid original file reference.");
     ids.add(r.id);
     for (const k of [
       "name",

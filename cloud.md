@@ -1,32 +1,43 @@
 # Architecture and roadmap
 
-## Version 1
+## Version 0.2: folder-backed localhost storage
 
-A local Vite/React application. PDF.js extracts PDF text; fflate and the browser XML parser extract DOCX paragraphs locally.
-A deterministic parser proposes structured contact, experience, education,
-project, and skill fields. The review screen shows the extracted source alongside
-editable fields, and unclassified text is retained. Parsing is approximate;
-review is mandatory. Scanned PDFs require OCR outside this version.
+A Vite/React UI connects to a Node localhost storage API in the same process and
+origin. `npm run dev`, `npm run preview`, and `npm start` all register that API via
+`vite.config.js`. No remote services, credentials, or cloud storage are involved.
+PDF.js and fflate/browser XML parsing still extract text in the browser.
 
-Resume versions and a shared personal profile use versioned localStorage on the
-current browser origin. No account, server, AI provider, or cloud storage is used.
-Clearing browser data removes saved data; JSON backup/export and import provide
-portability. Browser storage is not encrypted by this app. No sensitive profile
-answer is inferred from a resume.
+`server/folder-store.js` manages a user-selected empty or existing Folio data folder.
+`workspace.json` stores a versioned envelope with a revision ID, save time, and the
+validated workspace. `history/` retains full prior workspace envelopes, and
+`originals/` retains content-addressed uploads. Resume/application file references
+contain portable IDs, filenames, and sizes, never source-machine absolute paths.
+The ignored checkout-local `.folio-local.json` remembers the chosen location.
 
-## Next phases
+Writes are serialized, file contents are flushed before atomic replacement, and
+each save verifies the previous revision. A filesystem lock prevents simultaneous
+writes by separate processes. Stale tabs and changed folder selections cannot
+silently overwrite data. No write success is announced before disk completion.
+Originals and history are retained when active records are deleted.
 
-1. Improve extraction against user-approved resumes, especially multi-column PDFs.
-2. Optional user-authorized structured AI parsing, with source grounding and review.
-3. Browser extension sharing the structured resume schema; explicit activation.
-4. Workday adapter: fill visible fields, add repeatable sections, wait, verify.
-5. Greenhouse and Ashby adapters, tested against real employer configurations.
+The API accepts loopback Host values, rejects foreign Origin/cross-site requests,
+and requires a per-process token for data reads and writes. It is intended for
+localhost use only. Browser folder browsing lists directory names; selecting a
+folder is explicit. Filesystem permissions are inherited from the user's OS.
 
-Autofill must preserve existing answers, stop on uncertain questions, report
-partial fills, and leave submission to the user. Do not claim platform support
-until the complete interaction has been validated.
+`src/folder-client.js` owns API access and revision tracking. `FolderSetup.jsx`
+provides setup/switching; `WorkspaceGate` loads disk state before mounting the UI.
+`src/storage.js` validates/merges portable structured data and reads legacy browser
+storage only for explicit migration. Browser data is never automatically deleted.
+JSON exports contain structured records; the full folder is the portable backup.
 
-## Future cloud choices
+## Remaining phases
 
-Cloud sync and authentication are deliberately deferred. If added, define ownership,
-export/deletion behavior, encryption, and access boundaries before migrating data.
+1. More parser fixtures, especially multi-column PDFs and diverse date layouts.
+2. Optional user-authorized AI parsing with source grounding and mandatory review.
+3. Browser extension with explicit activation and the same structured schema.
+4. Workday, then Greenhouse and Ashby adapters with real-form validation.
+5. Optional in-app revision recovery and deliberate retention/pruning controls.
+
+Autofill must preserve existing answers, stop on uncertain questions, report partial
+fills, and leave submission to the user. Cloud sync/authentication remain deferred.

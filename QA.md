@@ -28,3 +28,21 @@ browser autofill, cloud sync, and GitHub remote setup are outside this release.
 - Eleven tests now include snapshot independence, persistence without the original
   resume, migration of older workspaces, application backup deduplication, and
   rejection of incomplete records, invalid dates, and unsafe links.
+
+## Version 0.2: folder persistence
+
+Verified locally on October 21, 2026 with synthetic data and temporary folders.
+
+- Selected an empty folder through the setup screen, uploaded/reviewed a text
+  resume, saved it, and verified the original bytes and workspace JSON on disk.
+- Reloaded the browser and reopened a copied folder through Change data folder.
+  Resume content and click-to-copy were restored; downloading the original worked.
+- Nineteen tests cover existing parser/application behavior plus folder creation,
+  revision history, reconnecting after restart, complete folder migration, original
+  deduplication/retention, corrupted/missing storage, stale writes, cross-process
+  locks, failed disk writes, missing originals, and localhost API access boundaries.
+- Tests that start localhost HTTP servers require a network-enabled environment.
+- Cross-OS portability uses relative file IDs and ordinary JSON/files. Runtime
+  validation was performed on Linux; Windows/macOS have not been device-tested.
+- Saved data uses the folder; old browser data is only an explicit migration source.
+  JSON exports do not include file bytes or full history; copy the entire folder.

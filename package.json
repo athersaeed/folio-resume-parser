@@ -1,15 +1,16 @@
 {
   "name": "simplify-clone",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node tests/parser.test.js",
-    "format": "prettier --write src tests *.md index.html package.json",
-    "format:check": "prettier --check src tests *.md index.html package.json"
+    "test": "node tests/parser.test.js && node tests/folder-store.test.js",
+    "format": "prettier --write src server tests *.js *.md index.html package.json",
+    "format:check": "prettier --check src server tests *.js *.md index.html package.json",
+    "start": "vite preview --host 127.0.0.1 --port 5173 --strictPort"
   },
   "dependencies": {
     "fflate": "^0.8.3",

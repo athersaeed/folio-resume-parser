@@ -32,13 +32,15 @@ import {
   ENTRY_FIELDS,
   LABELS,
 } from "./parser.js";
-import {
-  readWorkspace,
-  writeWorkspace,
-  mergeWorkspace,
-  validateWorkspace,
-} from "./storage.js";
+import { readWorkspace, mergeWorkspace, validateWorkspace } from "./storage.js";
 import { createApplication, APPLICATION_STATUSES } from "./applications.js";
+import FolderSetup from "./FolderSetup.jsx";
+import {
+  session,
+  saveToFolder,
+  archiveOriginal,
+  downloadOriginal,
+} from "./folder-client.js";
 import "./style.css";
 const profileFields = {
   name: "Full name",
@@ -52,16 +54,25 @@ const profileFields = {
   veteranStatus: "Veteran status (optional)",
   preferredAnswers: "Other reusable answers (optional)",
 };
-let initial,
-  loadError = "";
-try {
-  initial = readWorkspace();
-} catch {
-  initial = { schemaVersion: 1, resumes: [], profile: {}, applications: [] };
-  loadError =
-    "Saved data could not be loaded. Existing storage has not been changed. Export recovery data before saving new records.";
-}
-function App() {
+function App({ initial, folderPath, onChangeFolder }) {
+  const [saving, setSaving] = useState(false);
+  const savingRef = useRef(false);
+  const [legacyData, setLegacyData] = useState(() => {
+    try {
+      return readWorkspace();
+    } catch {
+      return null;
+    }
+  });
+  const legacyAvailable =
+    legacyData &&
+    (legacyData.resumes.some(
+      (r) => !initial.resumes.some((saved) => saved.id === r.id),
+    ) ||
+      legacyData.applications.some(
+        (a) => !initial.applications.some((saved) => saved.id === a.id),
+      ) ||
+      Object.keys(legacyData.profile).some((key) => !(key in initial.profile)));
   const [workspace, setWorkspace] = useState(initial),
     [selected, setSelected] = useState(initial.resumes[0]?.id || null),
     [draft, setDraft] = useState(
@@ -72,7 +83,7 @@ function App() {
     [mode, setMode] = useState("resumes"),
     [tab, setTab] = useState("contact"),
     [busy, setBusy] = useState(false),
-    [error, setError] = useState(loadError),
+    [error, setError] = useState(""),
     [toast, setToast] = useState(""),
     [copied, setCopied] = useState(""),
     [uploadOpen, setUploadOpen] = useState(false),
@@ -101,7 +112,7 @@ function App() {
       resumeId,
     });
   }
-  function saveApplication(e) {
+  async function saveApplication(e) {
     e.preventDefault();
     try {
       const record = createApplication(
@@ -109,7 +120,7 @@ function App() {
         workspace.resumes.find((r) => r.id === applicationForm.resumeId),
       );
       if (
-        persist({
+        await persist({
           ...workspace,
           applications: [record, ...workspace.applications],
         })
@@ -133,23 +144,27 @@ function App() {
     clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(""), 3500);
   };
-  function persist(next) {
-    if (loadError) {
-      setError(
-        "Storage recovery is required. Download recovery data and reload after repairing or clearing browser storage.",
-      );
+  async function persist(next) {
+    if (savingRef.current) {
+      setError("A save is already in progress. Please wait.");
       return false;
     }
+    savingRef.current = true;
+    setSaving(true);
     try {
-      writeWorkspace(next);
-      setWorkspace(next);
+      const result = await saveToFolder(next);
+      setWorkspace(result.workspace);
       setError("");
       return true;
-    } catch {
+    } catch (e) {
       setError(
-        "Could not save. Browser storage may be unavailable or full. Your edits are still open; export a draft backup before closing.",
+        e.message +
+          " Your edits are still open. Export a JSON backup before reloading if needed.",
       );
       return false;
+    } finally {
+      savingRef.current = false;
+      setSaving(false);
     }
   }
   function allowNavigation() {
@@ -171,7 +186,7 @@ function App() {
     setMode("resumes");
     setApplicationForm(null);
     setTab("contact");
-    setError(loadError);
+    setError("");
   }
   async function upload(file) {
     if (!file || busy) return;
@@ -181,7 +196,8 @@ function App() {
     try {
       const { extractFile } = await import("./files.js");
       const text = await extractFile(file);
-      setDraft(parseResume(text, file.name));
+      const original = await archiveOriginal(file);
+      setDraft({ ...parseResume(text, file.name), original });
       setMode("resumes");
       setTab("contact");
       setUploadOpen(false);
@@ -212,7 +228,7 @@ function App() {
       setError(e.message);
     }
   }
-  function save() {
+  async function save() {
     if (!draft.name.trim()) {
       setError("Give this resume a name before saving.");
       return;
@@ -225,7 +241,7 @@ function App() {
     const resumes = workspace.resumes.some((r) => r.id === next.id)
       ? workspace.resumes.map((r) => (r.id === next.id ? next : r))
       : [...workspace.resumes, next];
-    if (persist({ ...workspace, resumes })) {
+    if (await persist({ ...workspace, resumes })) {
       setSelected(next.id);
       setDraft(null);
       announce("Resume reviewed and saved. Click any field to copy.");
@@ -267,13 +283,6 @@ function App() {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
   }
   function backup() {
-    if (loadError) {
-      download(
-        { recovery: localStorage.getItem("folio.workspace.v1") },
-        "folio-recovery.json",
-      );
-      return;
-    }
     let data = workspace;
     if (draft)
       data = {
@@ -291,7 +300,7 @@ function App() {
     announce(
       draft || profileDirty
         ? "Backup includes your unsaved edits."
-        : "Backup downloaded. Keep it somewhere private.",
+        : "JSON exported. Copy the entire data folder to back up originals and history.",
     );
   }
   async function importBackup(file) {
@@ -300,7 +309,7 @@ function App() {
       if (file.size > 20 * 1024 * 1024)
         throw new Error("Backup is too large (maximum 20 MB).");
       const incoming = validateWorkspace(JSON.parse(await file.text()));
-      if (persist(mergeWorkspace(workspace, incoming))) {
+      if (await persist(mergeWorkspace(workspace, incoming))) {
         setProfile((p) => ({ ...incoming.profile, ...p }));
         announce(
           "Backup imported. Existing resumes and profile answers were preserved.",
@@ -312,11 +321,16 @@ function App() {
       backupInput.current.value = "";
     }
   }
-  function deleteResume() {
-    if (!saved || !window.confirm(`Delete “${saved.name}” from this browser?`))
+  async function deleteResume() {
+    if (
+      !saved ||
+      !window.confirm(
+        `Delete “${saved.name}” from the current workspace? Its earlier revisions stay in folder history.`,
+      )
+    )
       return;
     const resumes = workspace.resumes.filter((r) => r.id !== saved.id);
-    if (persist({ ...workspace, resumes })) {
+    if (await persist({ ...workspace, resumes })) {
       setSelected(resumes[0]?.id || null);
       setTab("contact");
       announce("Resume deleted.");
@@ -369,14 +383,14 @@ function App() {
   );
   React.useEffect(() => {
     const handler = (e) => {
-      if (draft || profileDirty || applicationForm) {
+      if (draft || profileDirty || applicationForm || saving) {
         e.preventDefault();
         e.returnValue = "";
       }
     };
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
-  }, [draft, profileDirty, applicationForm]);
+  }, [draft, profileDirty, applicationForm, saving]);
   React.useEffect(() => {
     const handler = (e) => {
       if (e.key === "Escape" && !busy) setUploadOpen(false);
@@ -388,7 +402,8 @@ function App() {
     if (uploadOpen) document.getElementById("upload-close")?.focus();
   }, [uploadOpen]);
   return (
-    <div className="app-shell">
+    <div className="app-shell" inert={saving ? true : undefined}>
+      {saving && <div className="saving-indicator">Saving to folder…</div>}
       <input
         ref={fileInput}
         type="file"
@@ -507,13 +522,24 @@ function App() {
         <div className="side-bottom">
           <div className="local-badge">
             <span className="status-dot" />
-            Local workspace <span>V0.1</span>
+            Folder workspace <span>V0.2</span>
           </div>
-          <p>Your resumes stay in this browser.</p>
+          <p className="data-folder-path" title={folderPath}>
+            {folderPath}
+          </p>
+          <button
+            className="text-button change-folder"
+            onClick={() => {
+              if (allowNavigation()) onChangeFolder();
+            }}
+          >
+            <FolderOpen size={14} />
+            Change data folder
+          </button>
           <div className="backup-actions">
             <button onClick={backup}>
               <Download size={14} />
-              Export backup
+              Export JSON
             </button>
             <button onClick={() => backupInput.current.click()}>
               <Upload size={14} />
@@ -535,7 +561,7 @@ function App() {
             </span>
           </div>
           <span className="private-label">
-            <ShieldCheck size={15} /> Stored on your device
+            <ShieldCheck size={15} /> Saved in your data folder
           </span>
         </header>
         <div className="main-content">
@@ -579,6 +605,29 @@ function App() {
               </button>
             </div>
           )}
+          {legacyAvailable && (
+            <div className="copy-banner legacy-banner">
+              <div>
+                <strong>Bring your existing browser data with you.</strong>
+                <p>
+                  Merge saved resumes, profile answers, and applications into
+                  this folder. Browser data is kept intact. Old uploads must be
+                  reuploaded to archive their original files.
+                </p>
+              </div>
+              <button
+                className="secondary"
+                onClick={async () => {
+                  if (await persist(mergeWorkspace(workspace, legacyData))) {
+                    setLegacyData(null);
+                    announce("Browser data copied to your folder.");
+                  }
+                }}
+              >
+                Import browser data
+              </button>
+            </div>
+          )}
           {mode === "profile" ? (
             <section className="panel profile-panel">
               <div className="panel-heading">
@@ -592,8 +641,8 @@ function App() {
                 <button
                   className="primary"
                   disabled={!profileDirty}
-                  onClick={() => {
-                    if (persist({ ...workspace, profile })) {
+                  onClick={async () => {
+                    if (await persist({ ...workspace, profile })) {
                       setProfileDirty(false);
                       announce("Personal profile saved.");
                     }
@@ -850,6 +899,19 @@ function App() {
                   {snapshotId === app.id && (
                     <div className="application-snapshot">
                       <h3>{app.resumeSnapshot.name}</h3>
+                      {app.resumeSnapshot.original && (
+                        <button
+                          className="text-button"
+                          onClick={() =>
+                            downloadOriginal(app.resumeSnapshot.original).catch(
+                              (e) => setError(e.message),
+                            )
+                          }
+                        >
+                          <Download size={14} />
+                          Download original file
+                        </button>
+                      )}
                       <p className="subtle">
                         Saved snapshot. Later resume edits or deletion will not
                         change this record. Click a field to copy.
@@ -1072,6 +1134,19 @@ function App() {
                         <BriefcaseBusiness size={15} />
                         Log application
                       </button>
+                      {saved.original && (
+                        <button
+                          className="secondary"
+                          onClick={() =>
+                            downloadOriginal(saved.original).catch((e) =>
+                              setError(e.message),
+                            )
+                          }
+                        >
+                          <Download size={15} />
+                          Original file
+                        </button>
+                      )}
                       <span className="ready-badge">
                         <span className="status-dot" />
                         {saved.reviewed ? "Ready to copy" : "Needs review"}
@@ -1326,7 +1401,7 @@ function App() {
             <span>Made for your next chapter.</span>
             <span>
               <ShieldCheck size={13} />
-              No uploads leave your browser
+              Files stay on your computer
             </span>
           </footer>
         </div>
@@ -1444,4 +1519,57 @@ function App() {
     </div>
   );
 }
-createRoot(document.getElementById("root")).render(<App />);
+function WorkspaceGate() {
+  const [connection, setConnection] = useState(null),
+    [choosing, setChoosing] = useState(false),
+    [connectionError, setConnectionError] = useState("");
+  async function reconnect() {
+    try {
+      setConnectionError("");
+      setConnection(await session());
+    } catch (e) {
+      setConnectionError(e.message);
+    }
+  }
+  React.useEffect(() => {
+    reconnect();
+  }, []);
+  if (connectionError)
+    return (
+      <main className="folder-setup">
+        <section className="panel folder-card">
+          <h1>Local storage is unavailable.</h1>
+          <p role="alert">{connectionError}</p>
+          <button className="primary" onClick={reconnect}>
+            Reconnect
+          </button>
+        </section>
+      </main>
+    );
+  if (!connection)
+    return (
+      <div className="folder-setup">
+        <p role="status">Opening your local workspace…</p>
+      </div>
+    );
+  if (!connection.connected || choosing)
+    return (
+      <FolderSetup
+        error={connection.error}
+        onCancel={connection.connected ? () => setChoosing(false) : null}
+        onConnected={(next) => {
+          setConnection(next);
+          setChoosing(false);
+        }}
+      />
+    );
+  return (
+    <App
+      key={connection.selection}
+      initial={connection.workspace}
+      folderPath={connection.path}
+      onChangeFolder={() => setChoosing(true)}
+    />
+  );
+}
+createRoot(document.getElementById("root")).render(<WorkspaceGate />);

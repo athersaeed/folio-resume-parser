@@ -14,3 +14,9 @@ uploads/
 backups/
 *.pdf
 *.docx
+# Machine-specific data-folder pointer and accidental local workspaces.
+.folio-local.json*
+workspace.json
+history/
+originals/
+folio-data/
