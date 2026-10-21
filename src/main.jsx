@@ -38,6 +38,7 @@ import {
   mergeWorkspace,
   validateWorkspace,
 } from "./storage.js";
+import { createApplication, APPLICATION_STATUSES } from "./applications.js";
 import "./style.css";
 const profileFields = {
   name: "Full name",
@@ -56,7 +57,7 @@ let initial,
 try {
   initial = readWorkspace();
 } catch {
-  initial = { schemaVersion: 1, resumes: [], profile: {} };
+  initial = { schemaVersion: 1, resumes: [], profile: {}, applications: [] };
   loadError =
     "Saved data could not be loaded. Existing storage has not been changed. Export recovery data before saving new records.";
 }
@@ -79,7 +80,47 @@ function App() {
     [query, setQuery] = useState(""),
     [profile, setProfile] = useState(initial.profile),
     [profileDirty, setProfileDirty] = useState(false),
-    [dragging, setDragging] = useState(false);
+    [dragging, setDragging] = useState(false),
+    [applicationForm, setApplicationForm] = useState(null),
+    [snapshotId, setSnapshotId] = useState(null);
+  function startApplication(resumeId = "") {
+    if (!allowNavigation()) return;
+    setDraft(null);
+    setProfile(workspace.profile);
+    setProfileDirty(false);
+    setMode("applications");
+    const now = new Date();
+    const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+    setApplicationForm({
+      company: "",
+      role: "",
+      date,
+      status: "Applied",
+      url: "",
+      notes: "",
+      resumeId,
+    });
+  }
+  function saveApplication(e) {
+    e.preventDefault();
+    try {
+      const record = createApplication(
+        applicationForm,
+        workspace.resumes.find((r) => r.id === applicationForm.resumeId),
+      );
+      if (
+        persist({
+          ...workspace,
+          applications: [record, ...workspace.applications],
+        })
+      ) {
+        setApplicationForm(null);
+        announce("Application logged with a snapshot of the resume used.");
+      }
+    } catch (e) {
+      setError(e.message);
+    }
+  }
   const fileInput = useRef(null),
     backupInput = useRef(null),
     toastTimer = useRef(null),
@@ -113,7 +154,7 @@ function App() {
   }
   function allowNavigation() {
     return (
-      (!draft && !profileDirty) ||
+      (!draft && !profileDirty && !applicationForm) ||
       window.confirm("Leave your unsaved edits? They will be discarded.")
     );
   }
@@ -128,6 +169,7 @@ function App() {
     setProfileDirty(false);
     setSelected(id);
     setMode("resumes");
+    setApplicationForm(null);
     setTab("contact");
     setError(loadError);
   }
@@ -145,6 +187,7 @@ function App() {
       setUploadOpen(false);
       setPaste("");
       setProfileDirty(false);
+      setApplicationForm(null);
     } catch (e) {
       setError(
         e.message || "Unable to read this file. Try pasting the resume text.",
@@ -164,6 +207,7 @@ function App() {
       setPaste("");
       setError("");
       setProfileDirty(false);
+      setApplicationForm(null);
     } catch (e) {
       setError(e.message);
     }
@@ -237,6 +281,12 @@ function App() {
         resumes: [...data.resumes.filter((r) => r.id !== draft.id), draft],
       };
     if (profileDirty) data = { ...data, profile };
+    if (applicationForm) {
+      setError(
+        "Save or cancel the application form before exporting a backup.",
+      );
+      return;
+    }
     download(data, "folio-backup.json");
     announce(
       draft || profileDirty
@@ -319,14 +369,14 @@ function App() {
   );
   React.useEffect(() => {
     const handler = (e) => {
-      if (draft || profileDirty) {
+      if (draft || profileDirty || applicationForm) {
         e.preventDefault();
         e.returnValue = "";
       }
     };
     window.addEventListener("beforeunload", handler);
     return () => window.removeEventListener("beforeunload", handler);
-  }, [draft, profileDirty]);
+  }, [draft, profileDirty, applicationForm]);
   React.useEffect(() => {
     const handler = (e) => {
       if (e.key === "Escape" && !busy) setUploadOpen(false);
@@ -384,11 +434,28 @@ function App() {
                 setProfile(workspace.profile);
                 setProfileDirty(false);
                 setMode("profile");
+                setApplicationForm(null);
               }
             }}
           >
             <UserRound size={18} />
             Personal profile
+          </button>
+          <button
+            className={mode === "applications" ? "nav-item active" : "nav-item"}
+            onClick={() => {
+              if (allowNavigation()) {
+                setDraft(null);
+                setProfile(workspace.profile);
+                setProfileDirty(false);
+                setApplicationForm(null);
+                setMode("applications");
+              }
+            }}
+          >
+            <BriefcaseBusiness size={18} />
+            Applications
+            <span className="count">{workspace.applications.length}</span>
           </button>
         </nav>
         <div className="side-heading">
@@ -460,7 +527,11 @@ function App() {
           <div>
             Workspace <ChevronRight size={13} />{" "}
             <span>
-              {mode === "profile" ? "Personal profile" : "My resumes"}
+              {mode === "profile"
+                ? "Personal profile"
+                : mode === "applications"
+                  ? "Applications"
+                  : "My resumes"}
             </span>
           </div>
           <span className="private-label">
@@ -474,12 +545,16 @@ function App() {
               <h1>
                 {mode === "profile"
                   ? "The details that stay with you."
-                  : "Your next role starts here."}
+                  : mode === "applications"
+                    ? "Every application, accounted for."
+                    : "Your next role starts here."}
               </h1>
               <p>
                 {mode === "profile"
                   ? "Save reusable answers once. Click to copy them into any application."
-                  : "Every version of your story, ready for the right opportunity."}
+                  : mode === "applications"
+                    ? "Know where you applied and exactly which resume you used."
+                    : "Every version of your story, ready for the right opportunity."}
               </p>
             </div>
             <button
@@ -563,6 +638,275 @@ function App() {
                 Optional questions can be left blank or answered “Prefer not to
                 answer.” Save changes to enable copying.
               </p>
+            </section>
+          ) : mode === "applications" ? (
+            <section className="panel profile-panel application-panel">
+              <div className="panel-heading">
+                <div>
+                  <h2>Application history</h2>
+                  <p>
+                    Log applications yourself. Each record keeps the saved
+                    resume as it was at that moment.
+                  </p>
+                </div>
+                <button
+                  className="primary"
+                  disabled={!!applicationForm}
+                  onClick={() => startApplication(selected || "")}
+                >
+                  <Plus size={16} />
+                  Log application
+                </button>
+              </div>
+              {applicationForm && (
+                <form onSubmit={saveApplication} className="application-form">
+                  <div className="field-grid">
+                    {Object.entries({
+                      company: "Company",
+                      role: "Job title",
+                      date: "Application / tracking date",
+                      url: "Job posting URL (optional)",
+                    }).map(([key, label]) => (
+                      <div className="field" key={key}>
+                        <label>
+                          <span>{label}</span>
+                          <input
+                            required={key !== "url"}
+                            type={
+                              key === "date"
+                                ? "date"
+                                : key === "url"
+                                  ? "url"
+                                  : "text"
+                            }
+                            value={applicationForm[key]}
+                            onChange={(e) =>
+                              setApplicationForm({
+                                ...applicationForm,
+                                [key]: e.target.value,
+                              })
+                            }
+                          />
+                        </label>
+                      </div>
+                    ))}
+                    <div className="field">
+                      <label>
+                        <span>Resume used</span>
+                        <select
+                          required
+                          value={applicationForm.resumeId}
+                          onChange={(e) =>
+                            setApplicationForm({
+                              ...applicationForm,
+                              resumeId: e.target.value,
+                            })
+                          }
+                        >
+                          <option value="">Choose a saved resume</option>
+                          {workspace.resumes
+                            .filter((r) => r.reviewed)
+                            .map((r) => (
+                              <option key={r.id} value={r.id}>
+                                {r.name}
+                              </option>
+                            ))}
+                        </select>
+                      </label>
+                    </div>
+                    <div className="field">
+                      <label>
+                        <span>Application status</span>
+                        <select
+                          value={applicationForm.status}
+                          onChange={(e) =>
+                            setApplicationForm({
+                              ...applicationForm,
+                              status: e.target.value,
+                            })
+                          }
+                        >
+                          {APPLICATION_STATUSES.map((status) => (
+                            <option key={status}>{status}</option>
+                          ))}
+                        </select>
+                      </label>
+                    </div>
+                    <div className="field wide">
+                      <label>
+                        <span>Notes (optional)</span>
+                        <textarea
+                          rows={2}
+                          value={applicationForm.notes}
+                          onChange={(e) =>
+                            setApplicationForm({
+                              ...applicationForm,
+                              notes: e.target.value,
+                            })
+                          }
+                        />
+                      </label>
+                    </div>
+                  </div>
+                  {!workspace.resumes.some((r) => r.reviewed) && (
+                    <p className="subtle">
+                      Upload, review, and save a resume first.
+                    </p>
+                  )}
+                  <div className="toolbar-actions">
+                    <button
+                      type="submit"
+                      className="primary"
+                      disabled={!workspace.resumes.some((r) => r.reviewed)}
+                    >
+                      <Check size={16} />
+                      Save application
+                    </button>
+                    <button
+                      type="button"
+                      className="secondary"
+                      onClick={() => {
+                        setApplicationForm(null);
+                        setError("");
+                      }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              )}
+              {!workspace.applications.length && !applicationForm && (
+                <div className="section-empty">
+                  <BriefcaseBusiness size={30} />
+                  <h3>Your next opportunity goes here.</h3>
+                  <p>
+                    Log the company, role, date, and resume used after you
+                    apply.
+                  </p>
+                </div>
+              )}
+              {workspace.applications.map((app) => (
+                <article className="application-record" key={app.id}>
+                  <div className="application-record-heading">
+                    <div>
+                      <h3>{app.role}</h3>
+                      <p>
+                        {app.company} <span className="middle-dot">·</span>{" "}
+                        {app.date}
+                      </p>
+                    </div>
+                    <label className="status-select">
+                      <span className="sr-only">
+                        Status for {app.role} at {app.company}
+                      </span>
+                      <select
+                        value={app.status}
+                        onChange={(e) =>
+                          persist({
+                            ...workspace,
+                            applications: workspace.applications.map((a) =>
+                              a.id === app.id
+                                ? { ...a, status: e.target.value }
+                                : a,
+                            ),
+                          })
+                        }
+                      >
+                        {APPLICATION_STATUSES.map((status) => (
+                          <option key={status}>{status}</option>
+                        ))}
+                      </select>
+                    </label>
+                  </div>
+                  <p className="resume-used">
+                    <FileText size={15} />
+                    Resume used: <strong>{app.resumeSnapshot.name}</strong>
+                  </p>
+                  {app.url && (
+                    <a
+                      className="text-button"
+                      href={app.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      Job posting <ArrowUpRight size={13} />
+                    </a>
+                  )}
+                  {app.notes && (
+                    <p className="application-notes">{app.notes}</p>
+                  )}
+                  <button
+                    className="secondary snapshot-toggle"
+                    aria-expanded={snapshotId === app.id}
+                    onClick={() =>
+                      setSnapshotId(snapshotId === app.id ? null : app.id)
+                    }
+                  >
+                    <FileText size={14} />
+                    {snapshotId === app.id
+                      ? "Hide resume used"
+                      : "View resume used"}
+                  </button>
+                  {snapshotId === app.id && (
+                    <div className="application-snapshot">
+                      <h3>{app.resumeSnapshot.name}</h3>
+                      <p className="subtle">
+                        Saved snapshot. Later resume edits or deletion will not
+                        change this record. Click a field to copy.
+                      </p>
+                      <div className="field-grid">
+                        {CONTACT_FIELDS.map((key) =>
+                          field(
+                            LABELS[key],
+                            app.resumeSnapshot.contact[key],
+                            `${app.id}-${key}`,
+                            () => {},
+                          ),
+                        )}
+                      </div>
+                      {Object.keys(ENTRY_FIELDS).map((section) => (
+                        <div key={section}>
+                          <h4>{section[0].toUpperCase() + section.slice(1)}</h4>
+                          {app.resumeSnapshot[section].map((entry) => (
+                            <div
+                              className="field-grid snapshot-entry"
+                              key={entry.id}
+                            >
+                              {ENTRY_FIELDS[section].map((key) =>
+                                field(
+                                  key === "name"
+                                    ? "Project name"
+                                    : LABELS[key] || key,
+                                  entry[key],
+                                  `${app.id}-${entry.id}-${key}`,
+                                  () => {},
+                                  key === "description",
+                                ),
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ))}
+                      <div className="field-grid">
+                        {field(
+                          "Skills",
+                          app.resumeSnapshot.skills,
+                          `${app.id}-skills`,
+                          () => {},
+                          true,
+                        )}
+                        {field(
+                          "Additional text",
+                          app.resumeSnapshot.notes,
+                          `${app.id}-notes`,
+                          () => {},
+                          true,
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </article>
+              ))}
             </section>
           ) : !resume ? (
             <>
@@ -721,6 +1065,13 @@ function App() {
                     </>
                   ) : (
                     <>
+                      <button
+                        className="secondary"
+                        onClick={() => startApplication(saved.id)}
+                      >
+                        <BriefcaseBusiness size={15} />
+                        Log application
+                      </button>
                       <span className="ready-badge">
                         <span className="status-dot" />
                         {saved.reviewed ? "Ready to copy" : "Needs review"}

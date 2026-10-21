@@ -128,3 +128,105 @@ test("manual entries expose schema used by future adapters", () => {
   assert.equal(entry.startDate, "");
   assert.ok(entry.id);
 });
+
+test("application records keep independent resume snapshots after editing or deleting the original", async () => {
+  const { createApplication } = await import("../src/applications.js");
+  const resume = {
+    ...parseResume(source),
+    reviewed: true,
+    name: "Example Co — frontend",
+  };
+  const record = createApplication(
+    {
+      company: " Example Co ",
+      role: "Developer",
+      date: "2026-10-21",
+      status: "Applied",
+      url: "https://example.test/jobs/123",
+      notes: "Submitted on careers site",
+    },
+    resume,
+  );
+  resume.name = "New name";
+  resume.experience[0].description = "Changed later";
+  assert.equal(record.company, "Example Co");
+  assert.equal(record.resumeSnapshot.name, "Example Co — frontend");
+  assert.notEqual(
+    record.resumeSnapshot.experience[0].description,
+    resume.experience[0].description,
+  );
+  const workspace = { ...emptyWorkspace(), applications: [record] };
+  assert.equal(
+    validateWorkspace(workspace).applications[0].resumeSnapshot.id,
+    resume.id,
+  );
+  let raw;
+  const storage = {
+    getItem: () => raw,
+    setItem: (_, v) => {
+      raw = v;
+    },
+  };
+  writeWorkspace(workspace, storage);
+  assert.deepEqual(readWorkspace(storage), workspace);
+});
+test("old workspaces migrate without losing resumes; backups merge application records", async () => {
+  const { createApplication } = await import("../src/applications.js");
+  const resume = { ...parseResume(source), reviewed: true };
+  const legacy = {
+    schemaVersion: 1,
+    resumes: [resume],
+    profile: { email: "existing@example.test" },
+  };
+  const migrated = readWorkspace({ getItem: () => JSON.stringify(legacy) });
+  assert.deepEqual(migrated.applications, []);
+  assert.deepEqual(migrated.resumes, legacy.resumes);
+  const record = createApplication(
+    {
+      company: "Example",
+      role: "Engineer",
+      date: "2026-10-21",
+      status: "Applied",
+    },
+    resume,
+  );
+  const incoming = { ...emptyWorkspace(), applications: [record] };
+  const merged = mergeWorkspace(migrated, incoming);
+  assert.equal(merged.applications.length, 1);
+  const again = mergeWorkspace(
+    { ...merged, applications: [{ ...record, status: "Interviewing" }] },
+    incoming,
+  );
+  assert.equal(again.applications.length, 1);
+  assert.equal(again.applications[0].status, "Interviewing");
+});
+test("application validation rejects incomplete records, unsafe links, and unreviewed resumes", async () => {
+  const { createApplication } = await import("../src/applications.js");
+  const resume = { ...parseResume(source), reviewed: true };
+  const fields = {
+    company: "Example",
+    role: "Engineer",
+    date: "2026-10-21",
+    status: "Applied",
+  };
+  assert.throws(() => createApplication({ ...fields, company: "" }, resume));
+  assert.throws(() =>
+    createApplication(fields, { ...resume, reviewed: false }),
+  );
+  assert.throws(() =>
+    createApplication({ ...fields, date: "2026-02-31" }, resume),
+  );
+  assert.throws(() =>
+    createApplication({ ...fields, url: "javascript:alert(1)" }, resume),
+  );
+  const record = createApplication(fields, resume);
+  assert.throws(() =>
+    validateWorkspace({
+      ...emptyWorkspace(),
+      applications: [{ ...record, resumeSnapshot: {} }],
+    }),
+  );
+  assert.throws(() =>
+    validateWorkspace({ ...emptyWorkspace(), applications: [record, record] }),
+  );
+});

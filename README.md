@@ -25,8 +25,11 @@ Open the localhost URL printed by Vite (normally http://127.0.0.1:5173).
 - Add/remove entries, name versions, duplicate versions, and delete saved resumes.
 - Explicit review/save, followed by one-click field copying with status feedback.
 - Shared editable personal profile with country-specific authorization answers.
-- Export/import JSON backups. Imports preserve existing records with matching IDs
+- Export/import JSON backups. Imports preserve existing resume/application records with matching IDs
   and existing profile answers. Unsaved draft edits are included in exports.
+- Application log: company, job title, date, posting URL, status, and notes.
+  Link each job to a reviewed resume; its full snapshot survives future edits/deletion.
+  Log applications manually, update their status, and view/copy the resume used.
 - No account, cloud service, API key, or browser extension required.
 
 ## Data and limits

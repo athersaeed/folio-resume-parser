@@ -9,6 +9,7 @@ Browser autofill is a later phase targeting Workday, Greenhouse, and Ashby.
 ## Working agreements
 
 - Keep project code and documentation inside this repository.
+- Keep application resume snapshots independent of later resume edits/deletion.
 - Preserve each resume version independently. Never merge conflicting dates or wording.
 - Never invent missing resume facts. Surface parser uncertainty and retain source text.
 - Require an explicit review/save before a new resume enters copy mode.
@@ -23,6 +24,7 @@ Browser autofill is a later phase targeting Workday, Greenhouse, and Ashby.
 
 `src/parser.js`: conservative parser and data model.
 `src/files.js`: browser-only PDF/DOCX/text extraction.
+`src/applications.js`: application records and immutable resume snapshots.
 `src/storage.js`: versioned browser storage and backup validation.
 `src/main.jsx`: application UI.
 `src/style.css`: responsive styling.

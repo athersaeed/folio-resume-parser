@@ -1410,3 +1410,121 @@ footer > span:last-child {
     justify-content: flex-end;
   }
 }
+.application-form {
+  background: #f6f8f1;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 22px;
+  margin-bottom: 25px;
+}
+.application-form .toolbar-actions {
+  margin-top: 20px;
+}
+.field select,
+.status-select select {
+  width: 100%;
+  border: 1px solid #dee5d5;
+  border-radius: 5px;
+  padding: 11px;
+  background: #fcfdf9;
+  color: #304e3b;
+  font: inherit;
+  font-size: 12px;
+  min-height: 42px;
+}
+.application-record {
+  border-top: 1px solid var(--border);
+  padding: 24px 0;
+}
+.application-record:last-child {
+  padding-bottom: 0;
+}
+.application-record-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.application-record h3 {
+  font-size: 16px;
+  margin: 0 0 8px;
+}
+.application-record-heading p {
+  font-size: 12px;
+  color: #75846b;
+  margin: 0;
+}
+.status-select select {
+  min-width: 115px;
+  font-size: 11px;
+}
+.resume-used {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  color: #718164;
+  margin: 18px 0 12px;
+  flex-wrap: wrap;
+}
+.application-notes {
+  font-size: 12px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.snapshot-toggle {
+  margin-top: 17px;
+  display: flex;
+}
+.application-snapshot {
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  padding: 22px;
+  margin-top: 20px;
+  background: #fbfcf8;
+}
+.application-snapshot h4 {
+  font-size: 12px;
+  margin: 24px 0 15px;
+}
+.snapshot-entry {
+  margin-bottom: 18px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+@media (max-width: 760px) {
+  .sidebar nav {
+    flex-wrap: wrap;
+  }
+  .sidebar .brand {
+    float: none;
+    margin-bottom: 12px;
+  }
+  .sidebar nav {
+    justify-content: flex-start;
+  }
+  .application-form,
+  .application-snapshot {
+    padding: 15px;
+  }
+  .application-record-heading {
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .resume-toolbar .toolbar-actions {
+    flex-wrap: wrap;
+  }
+  .status-select select {
+    min-width: 100px;
+  }
+}
