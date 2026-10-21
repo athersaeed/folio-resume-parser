@@ -1,0 +1,16 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+coverage/
+playwright-report/
+test-results/
+# Personal resumes and backups must never enter source control.
+private/
+uploads/
+backups/
+*.pdf
+*.docx
