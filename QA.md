@@ -46,3 +46,14 @@ Verified locally on October 21, 2026 with synthetic data and temporary folders.
   validation was performed on Linux; Windows/macOS have not been device-tested.
 - Saved data uses the folder; old browser data is only an explicit migration source.
   JSON exports do not include file bytes or full history; copy the entire folder.
+
+## Continuous resume layout
+
+- Replaced resume section tabs with a single scrollable stack in saved and review modes.
+- Browser-checked contact, education, multiple experiences, projects, uploads,
+  links, skill chips, and additional text using an isolated synthetic workspace.
+- Verified copying a description bullet includes its wrapped continuation, and
+  verified individual skill-chip copying against the browser clipboard.
+- Used the Education card edit action, changed a school, and saved successfully.
+  No browser console errors/warnings were recorded during that flow.
+- Save controls remain available in a sticky toolbar during long-page review.

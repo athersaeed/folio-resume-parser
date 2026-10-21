@@ -81,7 +81,6 @@ function App({ initial, folderPath, onChangeFolder }) {
         : null,
     ),
     [mode, setMode] = useState("resumes"),
-    [tab, setTab] = useState("contact"),
     [busy, setBusy] = useState(false),
     [error, setError] = useState(""),
     [toast, setToast] = useState(""),
@@ -185,7 +184,6 @@ function App({ initial, folderPath, onChangeFolder }) {
     setSelected(id);
     setMode("resumes");
     setApplicationForm(null);
-    setTab("contact");
     setError("");
   }
   async function upload(file) {
@@ -199,7 +197,6 @@ function App({ initial, folderPath, onChangeFolder }) {
       const original = await archiveOriginal(file);
       setDraft({ ...parseResume(text, file.name), original });
       setMode("resumes");
-      setTab("contact");
       setUploadOpen(false);
       setPaste("");
       setProfileDirty(false);
@@ -219,7 +216,6 @@ function App({ initial, folderPath, onChangeFolder }) {
       setDraft(parseResume(paste, "Pasted resume.txt"));
       setUploadOpen(false);
       setMode("resumes");
-      setTab("contact");
       setPaste("");
       setError("");
       setProfileDirty(false);
@@ -332,7 +328,6 @@ function App({ initial, folderPath, onChangeFolder }) {
     const resumes = workspace.resumes.filter((r) => r.id !== saved.id);
     if (await persist({ ...workspace, resumes })) {
       setSelected(resumes[0]?.id || null);
-      setTab("contact");
       announce("Resume deleted.");
     }
   }
@@ -371,13 +366,89 @@ function App({ initial, folderPath, onChangeFolder }) {
       </div>
     );
   }
-  const tabs = [
-    ["contact", "Contact", UserRound],
-    ["experience", "Experience", BriefcaseBusiness],
-    ["education", "Education", BookOpen],
-    ["projects", "Projects", Layers],
-    ["skills", "Skills & notes", FileText],
-  ];
+  function inlineCopy(label, value, id, className = "") {
+    if (!value) return null;
+    return (
+      <button
+        key={id}
+        className={"inline-copy " + className}
+        aria-label={`Copy ${label}`}
+        onClick={() => copy(value, id)}
+        title={`Click to copy ${label}`}
+      >
+        <span>{value}</span>
+        {copied === id ? <Check size={14} /> : <Copy size={13} />}
+      </button>
+    );
+  }
+  function editSection(id) {
+    setDraft(structuredClone(saved));
+    setError("");
+    requestAnimationFrame(() =>
+      document
+        .getElementById(id)
+        ?.scrollIntoView({ block: "start", behavior: "instant" }),
+    );
+  }
+  function sectionHeading(id, title, Icon, action = null) {
+    return (
+      <div className="section-title">
+        <h3>
+          <Icon size={17} />
+          {title}
+        </h3>
+        {editing ? (
+          action
+        ) : (
+          <button
+            className="icon-button"
+            aria-label={`Edit ${title}`}
+            onClick={() => editSection(id)}
+          >
+            <PenLine size={14} />
+          </button>
+        )}
+      </div>
+    );
+  }
+  function description(value, id) {
+    if (!value) return null;
+    const blocks = [];
+    for (const line of value.split(/\n/)) {
+      if (!line.trim()) continue;
+      const isBullet = /^[•●▪◦*\-–]\s*/.test(line);
+      if (!isBullet && blocks.at(-1)?.isBullet)
+        blocks.at(-1).text += "\n" + line;
+      else blocks.push({ isBullet, text: line.replace(/^[•●▪◦*\-–]\s*/, "") });
+    }
+    return (
+      <div className="resume-description">
+        {blocks.map(({ text, isBullet }, index) => {
+          return (
+            <div
+              className={
+                isBullet ? "description-line bullet-line" : "description-line"
+              }
+              key={index}
+            >
+              {inlineCopy(
+                `description line ${index + 1}`,
+                text,
+                `${id}-${index}`,
+              )}
+            </div>
+          );
+        })}
+        <button
+          className="text-button copy-description"
+          onClick={() => copy(value, id)}
+        >
+          {copied === id ? <Check size={13} /> : <Copy size={13} />}Copy full
+          description
+        </button>
+      </div>
+    );
+  }
   const filtered = workspace.resumes.filter((r) =>
     r.name.toLowerCase().includes(query.toLowerCase()),
   );
@@ -1212,8 +1283,8 @@ function App({ initial, folderPath, onChangeFolder }) {
                 <div className="copy-banner">
                   <Clipboard size={17} />
                   <span>
-                    Click a field to copy it. Switch to your application and
-                    paste.
+                    Click any text to copy it. Paste into your application.
+                    Scroll for all your details.
                   </span>
                   <span className="keyboard-hint">
                     click <ArrowRight size={12} /> Ctrl / ⌘ V
@@ -1223,160 +1294,424 @@ function App({ initial, folderPath, onChangeFolder }) {
               <div
                 className={"editor-layout " + (editing ? "with-source" : "")}
               >
-                <section className="panel resume-panel">
-                  <div
-                    className="tabs"
-                    role="tablist"
-                    aria-label="Resume sections"
-                  >
-                    {tabs.map(([key, label, Icon]) => (
-                      <button
-                        role="tab"
-                        aria-selected={tab === key}
-                        key={key}
-                        className={tab === key ? "active" : ""}
-                        onClick={() => setTab(key)}
-                      >
-                        <Icon size={15} />
-                        {label}
-                        {ENTRY_FIELDS[key] && <span>{resume[key].length}</span>}
-                      </button>
-                    ))}
-                  </div>
-                  <div
-                    className="section-content"
-                    role="tabpanel"
-                    aria-label={tabs.find((t) => t[0] === tab)?.[1]}
-                  >
-                    {tab === "contact" ? (
-                      <>
-                        <div className="section-title">
-                          <h3>Contact details</h3>
-                          <span>
-                            {editing
-                              ? "Check your header details"
-                              : "Click any field to copy"}
-                          </span>
+                <div className="resume-stack">
+                  <section className="panel resume-card" id="resume-contact">
+                    {sectionHeading(
+                      "resume-contact",
+                      "Contact details",
+                      UserRound,
+                    )}
+                    {editing ? (
+                      <div className="field-grid">
+                        {CONTACT_FIELDS.filter(
+                          (key) => !["linkedin", "website"].includes(key),
+                        ).map((key) =>
+                          field(
+                            LABELS[key],
+                            resume.contact[key],
+                            `contact-${key}`,
+                            (value) => updateContact(key, value),
+                          ),
+                        )}
+                      </div>
+                    ) : (
+                      <div className="contact-summary">
+                        <div className="contact-avatar" aria-hidden="true">
+                          {resume.contact.name
+                            .split(/\s+/)
+                            .filter(Boolean)
+                            .slice(0, 2)
+                            .map((n) => n[0])
+                            .join("") || <UserRound size={23} />}
                         </div>
-                        <div className="field-grid">
-                          {CONTACT_FIELDS.map((key) =>
-                            field(
+                        <div>
+                          {inlineCopy(
+                            "Full name",
+                            resume.contact.name,
+                            "contact-name",
+                            "contact-name",
+                          )}
+                          {["location", "email", "phone"].map((key) =>
+                            inlineCopy(
                               LABELS[key],
                               resume.contact[key],
                               `contact-${key}`,
-                              (value) => updateContact(key, value),
                             ),
                           )}
-                        </div>
-                      </>
-                    ) : ENTRY_FIELDS[tab] ? (
-                      <>
-                        <div className="section-title">
-                          <h3>{tabs.find((t) => t[0] === tab)[1]}</h3>
-                          {editing && (
-                            <button
-                              className="text-button"
-                              onClick={() =>
-                                setDraft({
-                                  ...draft,
-                                  [tab]: [...draft[tab], blankEntry(tab)],
-                                })
-                              }
-                            >
-                              <Plus size={15} />
-                              Add entry
-                            </button>
+                          {!Object.values(resume.contact).some(Boolean) && (
+                            <p className="subtle">
+                              No contact details added yet.
+                            </p>
                           )}
                         </div>
-                        {!resume[tab].length && (
-                          <div className="section-empty">
-                            <Layers size={28} />
-                            <h3>No {tab} added</h3>
-                            <p>
-                              {editing
-                                ? "Add an entry using your source text."
-                                : "Edit this resume to add an entry."}
-                            </p>
-                          </div>
+                      </div>
+                    )}
+                  </section>
+                  {["education", "experience", "projects"].map((section) => {
+                    const title = {
+                      education: "Education",
+                      experience: "Experience",
+                      projects: "Projects",
+                    }[section];
+                    const Icon = {
+                      education: BookOpen,
+                      experience: BriefcaseBusiness,
+                      projects: Layers,
+                    }[section];
+                    return (
+                      <section
+                        key={section}
+                        className="panel resume-card"
+                        id={`resume-${section}`}
+                      >
+                        {sectionHeading(
+                          `resume-${section}`,
+                          title,
+                          Icon,
+                          <button
+                            className="text-button"
+                            onClick={() =>
+                              setDraft({
+                                ...draft,
+                                [section]: [
+                                  ...draft[section],
+                                  blankEntry(section),
+                                ],
+                              })
+                            }
+                          >
+                            <Plus size={14} />
+                            Add{" "}
+                            {section === "education"
+                              ? "education"
+                              : section === "experience"
+                                ? "experience"
+                                : "project"}
+                          </button>,
                         )}
-                        {resume[tab].map((entry, index) => (
-                          <article className="entry" key={entry.id}>
-                            <div className="entry-heading">
-                              <span className="entry-number">
-                                {String(index + 1).padStart(2, "0")}
-                              </span>
-                              <h4>
-                                {(tab === "experience"
-                                  ? entry.company
-                                  : tab === "education"
-                                    ? entry.school
-                                    : entry.name) || "Untitled entry"}
-                              </h4>
-                              {editing && (
-                                <button
-                                  className="icon-button danger"
-                                  aria-label={`Remove entry ${index + 1}`}
-                                  onClick={() => {
-                                    if (
-                                      window.confirm(
-                                        "Remove this entry from the draft?",
+                        {!resume[section].length && (
+                          <p className="card-empty">
+                            {editing
+                              ? "Add an entry using your source text."
+                              : `No ${section} added yet.`}
+                          </p>
+                        )}
+                        {resume[section].map((entry, index) => (
+                          <article
+                            className="resume-history-entry"
+                            key={entry.id}
+                          >
+                            {editing ? (
+                              <>
+                                <div className="entry-heading">
+                                  <span className="entry-number">
+                                    {String(index + 1).padStart(2, "0")}
+                                  </span>
+                                  <h4>
+                                    {(section === "education"
+                                      ? entry.school
+                                      : section === "experience"
+                                        ? entry.company
+                                        : entry.name) || "Untitled entry"}
+                                  </h4>
+                                  <button
+                                    className="icon-button danger"
+                                    aria-label={`Remove ${section} entry ${index + 1}`}
+                                    onClick={() => {
+                                      if (
+                                        window.confirm(
+                                          "Remove this entry from the draft?",
+                                        )
                                       )
-                                    )
-                                      setDraft({
-                                        ...draft,
-                                        [tab]: draft[tab].filter(
-                                          (e) => e.id !== entry.id,
+                                        setDraft({
+                                          ...draft,
+                                          [section]: draft[section].filter(
+                                            (e) => e.id !== entry.id,
+                                          ),
+                                        });
+                                    }}
+                                  >
+                                    <Trash2 size={14} />
+                                  </button>
+                                </div>
+                                <div className="field-grid">
+                                  {ENTRY_FIELDS[section].map((key) =>
+                                    field(
+                                      key === "name"
+                                        ? "Project name"
+                                        : LABELS[key] || key,
+                                      entry[key],
+                                      `${entry.id}-${key}`,
+                                      (value) =>
+                                        updateEntry(
+                                          section,
+                                          entry.id,
+                                          key,
+                                          value,
                                         ),
-                                      });
-                                  }}
+                                      key === "description",
+                                    ),
+                                  )}
+                                </div>
+                              </>
+                            ) : (
+                              <div className="entry-summary">
+                                <div
+                                  className="entry-symbol"
+                                  aria-hidden="true"
                                 >
-                                  <Trash2 size={15} />
-                                </button>
-                              )}
-                            </div>
-                            <div className="field-grid">
-                              {ENTRY_FIELDS[tab].map((key) =>
-                                field(
-                                  key === "name"
-                                    ? "Project name"
-                                    : LABELS[key] || key,
-                                  entry[key],
-                                  `${entry.id}-${key}`,
-                                  (value) =>
-                                    updateEntry(tab, entry.id, key, value),
-                                  key === "description",
-                                ),
-                              )}
-                            </div>
+                                  <Icon size={20} />
+                                </div>
+                                <div className="entry-copy-content">
+                                  {section === "experience" ? (
+                                    <>
+                                      {inlineCopy(
+                                        "Job title",
+                                        entry.title,
+                                        `${entry.id}-title`,
+                                        "entry-title",
+                                      ) || (
+                                        <h4 className="entry-title">
+                                          Untitled experience
+                                        </h4>
+                                      )}
+                                      <div className="entry-meta">
+                                        {inlineCopy(
+                                          "Company",
+                                          entry.company,
+                                          `${entry.id}-company`,
+                                        )}
+                                        {entry.company && entry.location && (
+                                          <span>·</span>
+                                        )}
+                                        {inlineCopy(
+                                          "Location",
+                                          entry.location,
+                                          `${entry.id}-location`,
+                                        )}
+                                      </div>
+                                    </>
+                                  ) : section === "education" ? (
+                                    <>
+                                      {inlineCopy(
+                                        "School",
+                                        entry.school,
+                                        `${entry.id}-school`,
+                                        "entry-title",
+                                      ) || (
+                                        <h4 className="entry-title">
+                                          Untitled education
+                                        </h4>
+                                      )}
+                                      <div className="entry-meta">
+                                        {inlineCopy(
+                                          "Degree",
+                                          entry.degree,
+                                          `${entry.id}-degree`,
+                                        )}
+                                        {entry.degree && entry.fieldOfStudy && (
+                                          <span>·</span>
+                                        )}
+                                        {inlineCopy(
+                                          "Field of study",
+                                          entry.fieldOfStudy,
+                                          `${entry.id}-fieldOfStudy`,
+                                        )}
+                                      </div>
+                                      {inlineCopy(
+                                        "Location",
+                                        entry.location,
+                                        `${entry.id}-location`,
+                                      )}
+                                    </>
+                                  ) : (
+                                    <>
+                                      {inlineCopy(
+                                        "Project name",
+                                        entry.name,
+                                        `${entry.id}-name`,
+                                        "entry-title",
+                                      ) || (
+                                        <h4 className="entry-title">
+                                          Untitled project
+                                        </h4>
+                                      )}
+                                      {inlineCopy(
+                                        "Project URL",
+                                        entry.url,
+                                        `${entry.id}-url`,
+                                      )}
+                                    </>
+                                  )}
+                                  {section !== "projects" && (
+                                    <div className="entry-dates">
+                                      {inlineCopy(
+                                        "Start date",
+                                        entry.startDate,
+                                        `${entry.id}-startDate`,
+                                      )}
+                                      {entry.startDate && entry.endDate && (
+                                        <span>–</span>
+                                      )}
+                                      {inlineCopy(
+                                        "End date",
+                                        entry.endDate,
+                                        `${entry.id}-endDate`,
+                                      )}
+                                    </div>
+                                  )}
+                                  {description(
+                                    entry.description,
+                                    `${entry.id}-description`,
+                                  )}
+                                </div>
+                              </div>
+                            )}
                           </article>
                         ))}
+                      </section>
+                    );
+                  })}
+                  <section className="panel resume-card" id="resume-uploads">
+                    <div className="section-title">
+                      <h3>
+                        <FileText size={17} />
+                        Uploads
+                      </h3>
+                    </div>
+                    {resume.original ? (
+                      <div className="upload-summary">
+                        <div className="entry-symbol">
+                          <FileText size={21} />
+                        </div>
+                        <div>
+                          <strong>{resume.original.filename}</strong>
+                          <p>Original uploaded file</p>
+                          <button
+                            className="text-button"
+                            onClick={() =>
+                              downloadOriginal(resume.original).catch((e) =>
+                                setError(e.message),
+                              )
+                            }
+                          >
+                            <Download size={14} />
+                            Download original
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="card-empty">
+                        {resume.filename
+                          ? `${resume.filename} · Extracted text is available; no original file was archived.`
+                          : "Created from text. No original file attached."}
+                      </p>
+                    )}
+                  </section>
+                  <section className="panel resume-card" id="resume-links">
+                    {sectionHeading("resume-links", "Links", ArrowUpRight)}
+                    {editing ? (
+                      <div className="field-grid">
+                        {["linkedin", "website"].map((key) =>
+                          field(
+                            LABELS[key],
+                            resume.contact[key],
+                            `contact-${key}`,
+                            (value) => updateContact(key, value),
+                          ),
+                        )}
+                      </div>
+                    ) : (
+                      <div className="resume-links">
+                        {["linkedin", "website"].map(
+                          (key) =>
+                            resume.contact[key] && (
+                              <div key={key}>
+                                <h4>{LABELS[key]}</h4>
+                                {inlineCopy(
+                                  LABELS[key],
+                                  resume.contact[key],
+                                  `contact-${key}`,
+                                )}
+                              </div>
+                            ),
+                        )}
+                        {!resume.contact.linkedin &&
+                          !resume.contact.website && (
+                            <p className="card-empty">No links added yet.</p>
+                          )}
+                      </div>
+                    )}
+                  </section>
+                  <section className="panel resume-card" id="resume-skills">
+                    {sectionHeading("resume-skills", "Skills", Layers)}
+                    {editing ? (
+                      field(
+                        "Skills",
+                        resume.skills,
+                        "skills",
+                        (value) => setDraft({ ...draft, skills: value }),
+                        true,
+                      )
+                    ) : resume.skills ? (
+                      <>
+                        <div className="skill-chips">
+                          {resume.skills
+                            .split(/[,;|\n]+/)
+                            .map((skill) => skill.trim())
+                            .filter(Boolean)
+                            .map((skill, index) => (
+                              <button
+                                className={
+                                  "skill-chip " +
+                                  (copied === `skill-${index}`
+                                    ? "is-copied"
+                                    : "")
+                                }
+                                aria-label={`Copy skill ${skill}`}
+                                key={index}
+                                onClick={() => copy(skill, `skill-${index}`)}
+                              >
+                                {skill}
+                                {copied === `skill-${index}` && (
+                                  <Check size={12} />
+                                )}
+                              </button>
+                            ))}
+                        </div>
+                        <button
+                          className="text-button copy-description"
+                          onClick={() => copy(resume.skills, "skills")}
+                        >
+                          <Copy size={13} />
+                          Copy all skills
+                        </button>
                       </>
                     ) : (
-                      <>
-                        <div className="section-title">
-                          <h3>Skills & additional text</h3>
-                          <span>Preserved in your own words</span>
-                        </div>
-                        <div className="field-grid">
-                          {field(
-                            "Skills",
-                            resume.skills,
-                            "skills",
-                            (value) => setDraft({ ...draft, skills: value }),
-                            true,
-                          )}
-                          {field(
-                            "Additional / unclassified text",
-                            resume.notes,
-                            "notes",
-                            (value) => setDraft({ ...draft, notes: value }),
-                            true,
-                          )}
-                        </div>
-                      </>
+                      <p className="card-empty">No skills added yet.</p>
                     )}
-                  </div>
-                </section>
+                  </section>
+                  <section className="panel resume-card" id="resume-notes">
+                    {sectionHeading(
+                      "resume-notes",
+                      "Additional text",
+                      FileText,
+                    )}
+                    {editing ? (
+                      field(
+                        "Additional / unclassified text",
+                        resume.notes,
+                        "notes",
+                        (value) => setDraft({ ...draft, notes: value }),
+                        true,
+                      )
+                    ) : resume.notes ? (
+                      description(resume.notes, "notes")
+                    ) : (
+                      <p className="card-empty">No additional text.</p>
+                    )}
+                  </section>
+                </div>
                 {editing && (
                   <aside className="source-panel">
                     <div>
@@ -1495,7 +1830,6 @@ function App({ initial, folderPath, onChangeFolder }) {
                 setDraft(blankResume());
                 setUploadOpen(false);
                 setMode("resumes");
-                setTab("contact");
                 setProfileDirty(false);
               }}
             >

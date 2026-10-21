@@ -54,6 +54,8 @@ contain a valid Folio workspace. Unrelated nonempty folders are rejected.
 - PDF, DOCX, TXT uploads (15 MB; PDFs up to 30 pages), pasted text, or blank entries.
 - Original uploads are archived without changing their bytes. Different files with
   the same filename remain distinct; identical uploads reuse the same stored bytes.
+- View every resume section on one scrollable page. Click contact details, dates,
+  individual description bullets, links, or skill chips to copy them.
 - Review original extracted text alongside editable contact, experience, education,
   projects, skills, and unclassified text. Give each version a descriptive name.
 - Explicit review/save before one-click copying. Download the original from a saved
