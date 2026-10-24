@@ -248,3 +248,46 @@ test("grounding forgives PDF line wraps and hyphenation, nothing else", () => {
   assert.equal(resume.experience[1].description, "");
   assert.equal(rejected.length, 1);
 });
+
+test("full mode sends unmasked text, asks for contact, and still grounds it", async () => {
+  let sent;
+  const fetchImpl = async (url, init) => {
+    sent = JSON.parse(init.body);
+    const content = JSON.stringify({
+      contact: {
+        name: "Alex Example",
+        email: "alex@example.test",
+        phone: "(416) 555-0123",
+        location: "Toronto, Ontario",
+        linkedin: "https://linkedin.com/in/alex-example",
+        website: "alex.example.dev",
+      },
+      experience: [],
+      education: [],
+      projects: [],
+      skills: "",
+    });
+    return new Response(
+      JSON.stringify({ choices: [{ message: { content } }] }),
+      { status: 200 },
+    );
+  };
+  const result = await llmParse(source, {
+    model: "m",
+    apiKey: "k",
+    fetchImpl,
+    redact: false,
+  });
+  assert.ok(sent.messages[1].content.includes("alex@example.test"));
+  assert.ok(
+    sent.response_format.json_schema.schema.required.includes("contact"),
+  );
+  assert.match(sent.messages[0].content, /contact: the candidate's own name/);
+  assert.equal(result.resume.contact.name, "Alex Example");
+  assert.equal(result.resume.contact.website, "");
+  assert.deepEqual(
+    result.rejected.map((r) => r.path),
+    ["contact.website"],
+  );
+  assert.deepEqual(result.redactions, {});
+});

@@ -2,7 +2,7 @@
 // never reaches the browser. Output is a proposal; every value must be an exact
 // substring of the text the model saw, or it is dropped and reported.
 import { createHash } from "node:crypto";
-import { ENTRY_FIELDS } from "../src/parser.js";
+import { CONTACT_FIELDS, ENTRY_FIELDS } from "../src/parser.js";
 import { redactContact } from "./redact.js";
 
 export { redactContact };
@@ -84,6 +84,30 @@ export const PROMPT_SHA256 = createHash("sha256")
   .update(SYSTEM_PROMPT + JSON.stringify(RESUME_SCHEMA))
   .digest("hex");
 
+// Full mode: the user chose to send the unmasked resume, so the model also
+// extracts contact details. Values are still checked against the source.
+export const FULL_SYSTEM_PROMPT = SYSTEM_PROMPT.replace(
+  /Placeholders such as.*$/s,
+  `- contact: the candidate's own name, email, phone, location, LinkedIn URL, and
+  personal website, copied exactly; "" for any that are absent. Never use
+  details of references, co-authors, or other people.`,
+);
+export const FULL_SCHEMA = {
+  ...RESUME_SCHEMA,
+  properties: {
+    contact: {
+      type: "object",
+      properties: Object.fromEntries(
+        CONTACT_FIELDS.map((field) => [field, { type: "string" }]),
+      ),
+      required: CONTACT_FIELDS,
+      additionalProperties: false,
+    },
+    ...RESUME_SCHEMA.properties,
+  },
+  required: ["contact", ...RESUME_SCHEMA.required],
+};
+
 // reasoning: per-model setting, e.g. {effort: "none"} or {effort: "low"} for
 // models where reasoning is mandatory. Omitted for non-reasoning models.
 // temperature: null omits it, for models whose providers reject the parameter.
@@ -93,18 +117,23 @@ export function buildRequest({
   reasoning,
   privacy = "strict",
   temperature = 0,
+  full = false,
 }) {
   return {
     model,
     ...(temperature === null ? {} : { temperature }),
     max_tokens: 4000,
     messages: [
-      { role: "system", content: SYSTEM_PROMPT },
+      { role: "system", content: full ? FULL_SYSTEM_PROMPT : SYSTEM_PROMPT },
       { role: "user", content: `Resume text:\n<<<\n${text}\n>>>` },
     ],
     response_format: {
       type: "json_schema",
-      json_schema: { name: "resume", strict: true, schema: RESUME_SCHEMA },
+      json_schema: {
+        name: "resume",
+        strict: true,
+        schema: full ? FULL_SCHEMA : RESUME_SCHEMA,
+      },
     },
     provider: {
       require_parameters: true,
@@ -175,6 +204,13 @@ export function groundResume(data, source) {
     );
   }
   resume.skills = check("skills", data.skills);
+  if (data.contact && typeof data.contact === "object")
+    resume.contact = Object.fromEntries(
+      CONTACT_FIELDS.map((field) => [
+        field,
+        check(`contact.${field}`, data.contact[field]),
+      ]),
+    );
   return { resume, rejected };
 }
 
@@ -234,16 +270,22 @@ export async function llmParse(
     fetchImpl,
     attempts = 2,
     known = {},
+    redact = true,
   },
 ) {
   // known: contact values Folio already holds (profile), masked everywhere.
-  const redacted = redactContact(text, known);
+  // redact: false sends the full text, by explicit user choice, and asks for
+  // contact details too.
+  const redacted = redact
+    ? redactContact(text, known)
+    : { text, counts: {}, removedHeader: false };
   const body = buildRequest({
     model,
     text: redacted.text,
     reasoning,
     privacy,
     temperature,
+    full: !redact,
   });
   const usage = { cost: 0, prompt_tokens: 0, completion_tokens: 0 };
   let ms = 0;

@@ -14,7 +14,7 @@ function llmInput(data) {
       data.known[k],
     ]),
   );
-  return { text: data.text, known };
+  return { text: data.text, known, full: data.mode === "full" };
 }
 export function createApi(configPath) {
   const store = new FolderStore(configPath),
@@ -100,14 +100,16 @@ export function createApi(configPath) {
         });
       }
       if (url.pathname === "/api/llm/preview" && req.method === "POST") {
-        const { text, known } = llmInput(
+        const { text, known, full } = llmInput(
           JSON.parse(await body(req, 2 * 1024 * 1024)),
         );
-        const preview = redactContact(text, known);
+        const preview = full
+          ? { text, counts: {} }
+          : redactContact(text, known);
         return json(200, { text: preview.text, counts: preview.counts });
       }
       if (url.pathname === "/api/llm/parse" && req.method === "POST") {
-        const { text, known } = llmInput(
+        const { text, known, full } = llmInput(
           JSON.parse(await body(req, 2 * 1024 * 1024)),
         );
         const model = configuredModel();
@@ -118,6 +120,7 @@ export function createApi(configPath) {
             temperature: model.temperature,
             apiKey: process.env.OPENROUTER_API_KEY,
             known,
+            redact: !full,
           });
           return json(200, {
             model: model.id,

@@ -100,7 +100,8 @@ export async function llmStatus() {
     return { configured: false };
   }
 }
-export const llmPreview = (text, known) =>
-  postJson("/api/llm/preview", { text, known });
-export const llmParse = (text, known) =>
-  postJson("/api/llm/parse", { text, known });
+// mode: "private" masks personal details first; "full" sends the whole text.
+export const llmPreview = (text, known, mode) =>
+  postJson("/api/llm/preview", { text, known, mode });
+export const llmParse = (text, known, mode) =>
+  postJson("/api/llm/parse", { text, known, mode });

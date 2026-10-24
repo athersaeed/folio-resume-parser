@@ -48,6 +48,7 @@ import {
 import { mergeLlmResume, knownContact } from "./llm-merge.js";
 import "./style.css";
 const AI_PREFERENCE = "folio.parseWithAi";
+const AI_MODE = "folio.aiMode";
 const REDACTION_LABELS = {
   header: "contact header lines",
   NAME: "name",
@@ -57,6 +58,13 @@ const REDACTION_LABELS = {
   PERSONAL: "personal detail",
   ADDRESS: "address",
 };
+function readAiMode() {
+  try {
+    return localStorage.getItem(AI_MODE) === "full" ? "full" : "private";
+  } catch {
+    return "private";
+  }
+}
 function readAiPreference() {
   try {
     return localStorage.getItem(AI_PREFERENCE) === "on";
@@ -117,6 +125,7 @@ function App({ initial, folderPath, onChangeFolder }) {
     [snapshotId, setSnapshotId] = useState(null),
     [aiStatus, setAiStatus] = useState({ configured: false }),
     [aiEnabled, setAiEnabled] = useState(readAiPreference),
+    [aiMode, setAiMode] = useState(readAiMode),
     [aiReview, setAiReview] = useState(null),
     [aiSending, setAiSending] = useState(false);
   const aiActive = aiEnabled && aiStatus.configured;
@@ -126,19 +135,25 @@ function App({ initial, folderPath, onChangeFolder }) {
       localStorage.setItem(AI_PREFERENCE, on ? "on" : "off");
     } catch {}
   }
-  // With AI parsing on, nothing is sent until the user approves the redacted text.
+  function chooseAiMode(mode) {
+    setAiMode(mode);
+    try {
+      localStorage.setItem(AI_MODE, mode);
+    } catch {}
+  }
+  // With AI parsing on, nothing is sent until the user approves the exact text.
   async function review(rules, text) {
     if (!aiActive) return setDraft(rules);
     const known = knownContact(workspace.profile, rules.contact);
-    const preview = await llmPreview(text, known);
-    setAiReview({ rules, text, known, preview });
+    const preview = await llmPreview(text, known, aiMode);
+    setAiReview({ rules, text, known, preview, mode: aiMode });
   }
   async function sendToAi() {
-    const { rules, text, known } = aiReview;
+    const { rules, text, known, mode } = aiReview;
     setAiSending(true);
     setError("");
     try {
-      const ai = await llmParse(text, known);
+      const ai = await llmParse(text, known, mode);
       setDraft(mergeLlmResume(rules, ai));
       announce(
         `Parsed with AI in ${(ai.ms / 1000).toFixed(1)}s · $${ai.cost.toFixed(4)}`,
@@ -1882,6 +1897,41 @@ function App({ initial, folderPath, onChangeFolder }) {
                 </small>
               </span>
             </label>
+            {aiActive && (
+              <fieldset className="ai-mode" disabled={busy}>
+                <legend>What to send</legend>
+                <label>
+                  <input
+                    type="radio"
+                    name="ai-mode"
+                    checked={aiMode === "private"}
+                    onChange={() => chooseAiMode("private")}
+                  />
+                  <span>
+                    <strong>Mask personal details</strong>
+                    <small>
+                      Name, contact, address, and personal data are hidden.
+                      Contact fields are filled locally.
+                    </small>
+                  </span>
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="ai-mode"
+                    checked={aiMode === "full"}
+                    onChange={() => chooseAiMode("full")}
+                  />
+                  <span>
+                    <strong>Send full resume</strong>
+                    <small>
+                      Nothing is hidden; the AI parses contact details too.
+                      Values are still checked against your resume text.
+                    </small>
+                  </span>
+                </label>
+              </fieldset>
+            )}
             {error && (
               <p className="error" role="alert">
                 {error}
@@ -1958,13 +2008,15 @@ function App({ initial, folderPath, onChangeFolder }) {
             <p>
               Only the text below goes to {aiStatus.model} through OpenRouter,
               routed to zero-data-retention providers.{" "}
-              {Object.keys(aiReview.preview.counts).length
-                ? "Masked: " +
-                  Object.entries(aiReview.preview.counts)
-                    .map(([k, n]) => `${REDACTION_LABELS[k] || k} ×${n}`)
-                    .join(", ") +
-                  "."
-                : "Nothing was masked."}{" "}
+              {aiReview.mode === "full"
+                ? "Full mode: nothing is masked, including your name and contact details."
+                : Object.keys(aiReview.preview.counts).length
+                  ? "Masked: " +
+                    Object.entries(aiReview.preview.counts)
+                      .map(([k, n]) => `${REDACTION_LABELS[k] || k} ×${n}`)
+                      .join(", ") +
+                    "."
+                  : "Nothing was masked."}{" "}
               <strong>Anything still visible will be sent.</strong>
             </p>
             <pre className="ai-preview" tabIndex={0}>

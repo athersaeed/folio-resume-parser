@@ -2072,3 +2072,47 @@ footer > span:last-child {
   gap: 10px;
   flex-wrap: wrap;
 }
+.ai-mode {
+  display: grid;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 0;
+  border: 0;
+}
+.ai-mode legend {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: #87927d;
+  margin-bottom: 6px;
+}
+.ai-mode label {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border: 1px solid #e3e8d9;
+  border-radius: 8px;
+  cursor: pointer;
+}
+.ai-mode label:has(input:checked) {
+  border-color: #9fb48e;
+  background: #f5f8f1;
+}
+.ai-mode input {
+  margin-top: 2px;
+  accent-color: var(--green);
+}
+.ai-mode strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+}
+.ai-mode small {
+  display: block;
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #87927d;
+}

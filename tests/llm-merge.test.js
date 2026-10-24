@@ -73,3 +73,24 @@ test("known contact takes the name only from the saved profile", () => {
     },
   );
 });
+
+test("full mode fills contact from the AI, falling back to the rules parse", () => {
+  const rules = parseResume(text, "Alex.txt");
+  const merged = mergeLlmResume(rules, {
+    ...ai,
+    resume: {
+      ...ai.resume,
+      contact: {
+        name: "Alex Example",
+        email: "",
+        phone: "",
+        location: "Toronto",
+        linkedin: "",
+        website: "",
+      },
+    },
+  });
+  assert.equal(merged.contact.location, "Toronto");
+  assert.equal(merged.contact.email, rules.contact.email);
+  assert.ok(merged.warnings.some((w) => /Full mode/.test(w)));
+});

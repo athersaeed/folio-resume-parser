@@ -1,6 +1,7 @@
-// Combine an AI parse with the rules parse. Contact details, raw text, and notes
-// always come from the local rules parser; the model never sees them.
-import { blankEntry, ENTRY_FIELDS } from "./parser.js";
+// Combine an AI parse with the rules parse. Raw text and notes always come from
+// the local rules parser. Contact details do too, unless the user chose full mode,
+// where the model's source-checked contact values fill in.
+import { blankEntry, CONTACT_FIELDS, ENTRY_FIELDS } from "./parser.js";
 
 const SECTIONS = Object.keys(ENTRY_FIELDS);
 
@@ -28,6 +29,14 @@ export function mergeLlmResume(rules, ai) {
     }));
   }
   merged.skills = ai.resume?.skills || rules.skills;
+  const full = Boolean(ai.resume?.contact);
+  if (full)
+    merged.contact = Object.fromEntries(
+      CONTACT_FIELDS.map((field) => [
+        field,
+        ai.resume.contact[field] || rules.contact[field],
+      ]),
+    );
   merged.warnings = [
     `Parsed with AI (${ai.model}). Every value was checked against your resume text` +
       (ai.rejected
@@ -39,7 +48,9 @@ export function mergeLlmResume(rules, ai) {
           `The AI returned no ${kept.join(" or ")} entries, so those come from the rules parser.`,
         ]
       : []),
-    "Contact details come from the local parser; they were masked before sending.",
+    full
+      ? "Full mode: the whole resume was sent, and contact details came from the AI where it found them."
+      : "Contact details come from the local parser; they were masked before sending.",
     ...rules.warnings.slice(1),
   ];
   return merged;
