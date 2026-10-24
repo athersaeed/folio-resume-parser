@@ -1,5 +1,21 @@
 import { randomBytes } from "node:crypto";
 import { FolderStore, StorageError } from "./folder-store.js";
+import { configuredModel, llmParse } from "./llm-parse.js";
+import { redactContact } from "./redact.js";
+
+// Profile values the client may pass for exact-match redaction.
+const KNOWN_FIELDS = ["name", "email", "phone", "linkedin", "website"];
+function llmInput(data) {
+  if (typeof data?.text !== "string" || !data.text.trim())
+    throw new StorageError("No resume text to parse.", 400);
+  const known = Object.fromEntries(
+    KNOWN_FIELDS.filter((k) => typeof data.known?.[k] === "string").map((k) => [
+      k,
+      data.known[k],
+    ]),
+  );
+  return { text: data.text, known };
+}
 export function createApi(configPath) {
   const store = new FolderStore(configPath),
     token = randomBytes(32).toString("hex");
@@ -74,6 +90,46 @@ export function createApi(configPath) {
           "X-Content-Type-Options": "nosniff",
         });
         return res.end(bytes);
+      }
+      // Optional AI parsing. The OpenRouter key stays in this process; the browser
+      // only learns whether one is configured. Preview never leaves the machine.
+      if (url.pathname === "/api/llm/status" && req.method === "GET") {
+        return json(200, {
+          configured: Boolean(process.env.OPENROUTER_API_KEY),
+          model: configuredModel().id,
+        });
+      }
+      if (url.pathname === "/api/llm/preview" && req.method === "POST") {
+        const { text, known } = llmInput(
+          JSON.parse(await body(req, 2 * 1024 * 1024)),
+        );
+        const preview = redactContact(text, known);
+        return json(200, { text: preview.text, counts: preview.counts });
+      }
+      if (url.pathname === "/api/llm/parse" && req.method === "POST") {
+        const { text, known } = llmInput(
+          JSON.parse(await body(req, 2 * 1024 * 1024)),
+        );
+        const model = configuredModel();
+        try {
+          const result = await llmParse(text, {
+            model: model.id,
+            reasoning: model.reasoning,
+            temperature: model.temperature,
+            apiKey: process.env.OPENROUTER_API_KEY,
+            known,
+          });
+          return json(200, {
+            model: model.id,
+            resume: result.resume,
+            rejected: result.rejected.length,
+            redactions: result.redactions,
+            cost: Number(result.usage?.cost) || 0,
+            ms: Math.round(result.ms),
+          });
+        } catch (e) {
+          throw new StorageError(`AI parsing failed: ${e.message}`, 502);
+        }
       }
       throw new StorageError("Unknown storage operation.", 404);
     } catch (e) {

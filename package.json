@@ -7,7 +7,7 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node tests/parser.test.js && node tests/folder-store.test.js && node tests/llm-parse.test.js && node tests/redact.test.js",
+    "test": "node tests/parser.test.js && node tests/folder-store.test.js && node tests/llm-parse.test.js && node tests/redact.test.js && node tests/llm-merge.test.js",
     "format": "prettier --write src server tests *.js *.md index.html package.json",
     "format:check": "prettier --check src server tests *.js *.md index.html package.json",
     "start": "vite preview --host 127.0.0.1 --port 5173 --strictPort",

@@ -23,6 +23,7 @@ import {
   BriefcaseBusiness,
   Layers,
   LoaderCircle,
+  Sparkles,
 } from "lucide-react";
 import {
   parseResume,
@@ -40,8 +41,29 @@ import {
   saveToFolder,
   archiveOriginal,
   downloadOriginal,
+  llmStatus,
+  llmPreview,
+  llmParse,
 } from "./folder-client.js";
+import { mergeLlmResume, knownContact } from "./llm-merge.js";
 import "./style.css";
+const AI_PREFERENCE = "folio.parseWithAi";
+const REDACTION_LABELS = {
+  header: "contact header lines",
+  NAME: "name",
+  EMAIL: "email",
+  PHONE: "phone",
+  LINK: "profile link",
+  PERSONAL: "personal detail",
+  ADDRESS: "address",
+};
+function readAiPreference() {
+  try {
+    return localStorage.getItem(AI_PREFERENCE) === "on";
+  } catch {
+    return false;
+  }
+}
 const profileFields = {
   name: "Full name",
   email: "Email",
@@ -92,7 +114,52 @@ function App({ initial, folderPath, onChangeFolder }) {
     [profileDirty, setProfileDirty] = useState(false),
     [dragging, setDragging] = useState(false),
     [applicationForm, setApplicationForm] = useState(null),
-    [snapshotId, setSnapshotId] = useState(null);
+    [snapshotId, setSnapshotId] = useState(null),
+    [aiStatus, setAiStatus] = useState({ configured: false }),
+    [aiEnabled, setAiEnabled] = useState(readAiPreference),
+    [aiReview, setAiReview] = useState(null),
+    [aiSending, setAiSending] = useState(false);
+  const aiActive = aiEnabled && aiStatus.configured;
+  function toggleAi(on) {
+    setAiEnabled(on);
+    try {
+      localStorage.setItem(AI_PREFERENCE, on ? "on" : "off");
+    } catch {}
+  }
+  // With AI parsing on, nothing is sent until the user approves the redacted text.
+  async function review(rules, text) {
+    if (!aiActive) return setDraft(rules);
+    const known = knownContact(workspace.profile, rules.contact);
+    const preview = await llmPreview(text, known);
+    setAiReview({ rules, text, known, preview });
+  }
+  async function sendToAi() {
+    const { rules, text, known } = aiReview;
+    setAiSending(true);
+    setError("");
+    try {
+      const ai = await llmParse(text, known);
+      setDraft(mergeLlmResume(rules, ai));
+      announce(
+        `Parsed with AI in ${(ai.ms / 1000).toFixed(1)}s · $${ai.cost.toFixed(4)}`,
+      );
+    } catch (e) {
+      setDraft({
+        ...rules,
+        warnings: [
+          `${e.message} These fields come from the rules parser instead.`,
+          ...rules.warnings,
+        ],
+      });
+    } finally {
+      setAiSending(false);
+      setAiReview(null);
+    }
+  }
+  function keepRulesOnly() {
+    setDraft(aiReview.rules);
+    setAiReview(null);
+  }
   function startApplication(resumeId = "") {
     if (!allowNavigation()) return;
     setDraft(null);
@@ -195,7 +262,7 @@ function App({ initial, folderPath, onChangeFolder }) {
       const { extractFile } = await import("./files.js");
       const text = await extractFile(file);
       const original = await archiveOriginal(file);
-      setDraft({ ...parseResume(text, file.name), original });
+      await review({ ...parseResume(text, file.name), original }, text);
       setMode("resumes");
       setUploadOpen(false);
       setPaste("");
@@ -210,10 +277,11 @@ function App({ initial, folderPath, onChangeFolder }) {
       if (fileInput.current) fileInput.current.value = "";
     }
   }
-  function fromPaste() {
-    if (!allowNavigation()) return;
+  async function fromPaste() {
+    if (!allowNavigation() || busy) return;
+    setBusy(true);
     try {
-      setDraft(parseResume(paste, "Pasted resume.txt"));
+      await review(parseResume(paste, "Pasted resume.txt"), paste);
       setUploadOpen(false);
       setMode("resumes");
       setPaste("");
@@ -222,6 +290,8 @@ function App({ initial, folderPath, onChangeFolder }) {
       setApplicationForm(null);
     } catch (e) {
       setError(e.message);
+    } finally {
+      setBusy(false);
     }
   }
   async function save() {
@@ -472,6 +542,12 @@ function App({ initial, folderPath, onChangeFolder }) {
   React.useEffect(() => {
     if (uploadOpen) document.getElementById("upload-close")?.focus();
   }, [uploadOpen]);
+  React.useEffect(() => {
+    llmStatus().then(setAiStatus);
+  }, []);
+  React.useEffect(() => {
+    if (aiReview) document.getElementById("ai-send")?.focus();
+  }, [aiReview]);
   return (
     <div className="app-shell" inert={saving ? true : undefined}>
       {saving && <div className="saving-indicator">Saving to folder…</div>}
@@ -1786,6 +1862,26 @@ function App({ initial, folderPath, onChangeFolder }) {
               Upload a resume or paste its text. You’ll review the fields before
               saving.
             </p>
+            <label
+              className={"ai-toggle" + (aiStatus.configured ? "" : " disabled")}
+            >
+              <input
+                type="checkbox"
+                checked={aiActive}
+                disabled={busy || !aiStatus.configured}
+                onChange={(e) => toggleAi(e.target.checked)}
+              />
+              <span>
+                <strong>
+                  <Sparkles size={13} /> Parse with AI
+                </strong>
+                <small>
+                  {aiStatus.configured
+                    ? `Uses ${aiStatus.model} through OpenRouter. You’ll see exactly what is sent first.`
+                    : "Add OPENROUTER_API_KEY to .env and restart Folio to enable."}
+                </small>
+              </span>
+            </label>
             {error && (
               <p className="error" role="alert">
                 {error}
@@ -1819,7 +1915,7 @@ function App({ initial, folderPath, onChangeFolder }) {
               disabled={busy || !paste.trim()}
               onClick={fromPaste}
             >
-              Parse & review
+              {aiActive ? "Preview & parse with AI" : "Parse & review"}
               <ArrowRight size={16} />
             </button>
             <button
@@ -1835,6 +1931,70 @@ function App({ initial, folderPath, onChangeFolder }) {
             >
               Start with a blank resume
             </button>
+          </section>
+        </div>
+      )}
+      {aiReview && (
+        <div className="modal-backdrop">
+          <section
+            className="modal ai-review"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="ai-review-title"
+            onKeyDown={(e) => {
+              if (e.key === "Escape" && !aiSending) setAiReview(null);
+            }}
+          >
+            <button
+              className="modal-close icon-button"
+              aria-label="Cancel without sending"
+              disabled={aiSending}
+              onClick={() => setAiReview(null)}
+            >
+              <X size={20} />
+            </button>
+            <span className="mini-label">BEFORE ANYTHING IS SENT</span>
+            <h2 id="ai-review-title">Check what leaves your computer.</h2>
+            <p>
+              Only the text below goes to {aiStatus.model} through OpenRouter,
+              routed to zero-data-retention providers.{" "}
+              {Object.keys(aiReview.preview.counts).length
+                ? "Masked: " +
+                  Object.entries(aiReview.preview.counts)
+                    .map(([k, n]) => `${REDACTION_LABELS[k] || k} ×${n}`)
+                    .join(", ") +
+                  "."
+                : "Nothing was masked."}{" "}
+              <strong>Anything still visible will be sent.</strong>
+            </p>
+            <pre className="ai-preview" tabIndex={0}>
+              {aiReview.preview.text}
+            </pre>
+            <div className="ai-actions">
+              <button
+                className="secondary"
+                disabled={aiSending}
+                onClick={keepRulesOnly}
+              >
+                Use rules parser only
+              </button>
+              <button
+                id="ai-send"
+                className="primary"
+                disabled={aiSending}
+                onClick={sendToAi}
+              >
+                {aiSending ? (
+                  <>
+                    <LoaderCircle className="spin" size={16} /> Parsing…
+                  </>
+                ) : (
+                  <>
+                    Send & review <ArrowRight size={16} />
+                  </>
+                )}
+              </button>
+            </div>
           </section>
         </div>
       )}

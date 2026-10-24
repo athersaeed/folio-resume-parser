@@ -2016,3 +2016,59 @@ footer > span:last-child {
 .contact-summary .inline-copy {
   width: fit-content;
 }
+.ai-toggle {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  margin: 18px 0 0;
+  padding: 13px 14px;
+  border: 1px solid #dce3d5;
+  border-radius: 8px;
+  background: #f5f8f1;
+  cursor: pointer;
+}
+.ai-toggle input {
+  margin-top: 2px;
+  accent-color: var(--green);
+}
+.ai-toggle strong {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green);
+}
+.ai-toggle small {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 1.5;
+  color: #87927d;
+}
+.ai-toggle.disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+.modal.ai-review {
+  width: 680px;
+}
+.ai-preview {
+  max-height: 46vh;
+  overflow: auto;
+  margin: 18px 0;
+  padding: 14px 16px;
+  background: #f3f6ef;
+  border: 1px solid #e3e8d9;
+  border-radius: 8px;
+  font-size: 11px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.ai-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}

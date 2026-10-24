@@ -9,6 +9,17 @@ export { redactContact };
 
 export const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
+// Best full-resume result in the 2026-10-24 comparison. OPENROUTER_MODEL overrides
+// the model ID (with that provider's default reasoning settings).
+export const DEFAULT_MODEL = {
+  id: "google/gemma-4-26b-a4b-it",
+  reasoning: { enabled: false },
+};
+export function configuredModel() {
+  const id = process.env.OPENROUTER_MODEL?.trim();
+  return id && id !== DEFAULT_MODEL.id ? { id } : DEFAULT_MODEL;
+}
+
 export const SYSTEM_PROMPT = `You extract the structure of a resume into JSON.
 Copy every value exactly as it appears in the resume text: same spelling,
 capitalization, punctuation, and abbreviations. Never rephrase, translate,

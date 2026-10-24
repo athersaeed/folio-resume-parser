@@ -83,3 +83,24 @@ export async function downloadOriginal(original) {
   link.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
+// Optional AI parsing through the local server, which holds the OpenRouter key.
+async function postJson(url, data) {
+  return (
+    await request(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    })
+  ).json();
+}
+export async function llmStatus() {
+  try {
+    return await (await request("/api/llm/status")).json();
+  } catch {
+    return { configured: false };
+  }
+}
+export const llmPreview = (text, known) =>
+  postJson("/api/llm/preview", { text, known });
+export const llmParse = (text, known) =>
+  postJson("/api/llm/parse", { text, known });
