@@ -1,0 +1,13 @@
+{
+  "file": "resume-heldout.json",
+  "sha256": "ef28db35976f07f0e289db9e70662d4d794b371f7cc15021254c3750e6a8854d",
+  "frozen_utc": "2026-10-24T02:07:50.066310+00:00",
+  "blocks": 22,
+  "fields": 44,
+  "scored": false,
+  "rules": [
+    "Score each approach once against this frozen file and record the result, good or bad.",
+    "Do not change rules, prompts, or fixtures after inspecting held-out results.",
+    "After scoring, this set becomes development data; write a new held-out set for the next round."
+  ]
+}

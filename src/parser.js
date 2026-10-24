@@ -90,6 +90,11 @@ const dateRange = new RegExp(
 const bullet = /^[•●▪◦*\-–]\s*/;
 const degree =
   /\b(bachelor|master|doctor|diploma|certificate|b\.?\s?s\.?c?\.?|m\.?\s?s\.?c?\.?|b\.?a\.?|ph\.?d\.?)\b/i;
+// Returns the section key a heading line starts, or undefined for other lines.
+export function sectionHeading(line) {
+  const heading = line.replace(/:$/, "").trim();
+  return Object.keys(headings).find((k) => headings[k].test(heading));
+}
 function splitHeader(line) {
   return line
     .split(/\s+[|•]\s+|\t+|\s{3,}/)
@@ -119,10 +124,7 @@ export function parseResume(text, filename = "Resume.txt") {
   };
   let active = "contact";
   for (const line of lines) {
-    const heading = line.replace(/:$/, "").trim();
-    const section = Object.keys(headings).find((k) =>
-      headings[k].test(heading),
-    );
+    const section = sectionHeading(line);
     if (section) {
       active = section;
       if (section === "notes") sections.notes.push(line);

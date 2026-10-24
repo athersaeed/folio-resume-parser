@@ -7,10 +7,12 @@
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
     "preview": "vite preview --host 127.0.0.1",
-    "test": "node tests/parser.test.js && node tests/folder-store.test.js",
+    "test": "node tests/parser.test.js && node tests/folder-store.test.js && node tests/llm-parse.test.js",
     "format": "prettier --write src server tests *.js *.md index.html package.json",
     "format:check": "prettier --check src server tests *.js *.md index.html package.json",
-    "start": "vite preview --host 127.0.0.1 --port 5173 --strictPort"
+    "start": "vite preview --host 127.0.0.1 --port 5173 --strictPort",
+    "compare:llm": "node scripts/llm-compare.mjs",
+    "bench:resume": "node scripts/bench-resume-extract.mjs"
   },
   "dependencies": {
     "fflate": "^0.8.3",

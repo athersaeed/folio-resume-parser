@@ -1,0 +1,6155 @@
+{
+  "created": "2026-10-24T03:07:33.050Z",
+  "split": "practice",
+  "privacy": "strict",
+  "promptSha256": "341931ed63154a403c6a8705f710aff14be0c5d51c89f44eeecfc64c6f1d95fc",
+  "systemPrompt": "You extract the structure of a resume into JSON.\nCopy every value exactly as it appears in the resume text: same spelling,\ncapitalization, punctuation, and abbreviations. Never rephrase, translate,\nexpand, correct, or infer anything. Use \"\" for any field the resume does not state.\nList entries in the order they appear. Do not include field labels such as\n\"Company:\" or \"Demo:\" inside values.\n- experience: company is the employer organization; title is the position held.\n- education: school is the institution; degree is the qualification as written;\n  fieldOfStudy only when it is written separately from the degree.\n- projects: name is only the project's name, not its description; url is the\n  project's link exactly as written.\n- startDate/endDate: copy the source wording, e.g. \"Jan 2023\" or \"Present\".\n- description: the entry's detail lines copied verbatim, one per line.\n- skills: the skills section copied verbatim.\nPlaceholders such as [EMAIL] mark removed contact details; ignore them.",
+  "fixtureSha256": {
+    "resume-decisions.json": "5af7c9811f0cae6f873366efa86133592006c95c30ac95cf9428755499e1aae2",
+    "resume-context-validation.json": "0654802eb038b6fe96d364510539227f953ac511f5b81de369328aa4ac88d4bf"
+  },
+  "models": [
+    {
+      "id": "openai/gpt-oss-20b",
+      "reasoning": {
+        "effort": "low"
+      },
+      "note": "Reasoning is mandatory; lowest supported effort."
+    },
+    {
+      "id": "google/gemma-4-26b-a4b-it",
+      "reasoning": {
+        "enabled": false
+      }
+    },
+    {
+      "id": "anthropic/claude-haiku-5.5",
+      "reasoning": {
+        "effort": "none"
+      },
+      "temperature": null,
+      "note": "Its providers reject temperature."
+    }
+  ],
+  "summaries": {
+    "rules": {
+      "fields": 60,
+      "correct": 30,
+      "correctBeforeGrounding": 30,
+      "wrongNonempty": 14,
+      "missed": 16,
+      "rejectedValues": 0,
+      "invalidOutputs": 0,
+      "requestErrors": 0,
+      "medianMs": 0,
+      "p95Ms": 0,
+      "costUsd": 0,
+      "promptTokens": 0,
+      "completionTokens": 0
+    },
+    "openai/gpt-oss-20b": {
+      "fields": 60,
+      "correct": 58,
+      "correctBeforeGrounding": 58,
+      "wrongNonempty": 2,
+      "missed": 0,
+      "rejectedValues": 0,
+      "invalidOutputs": 0,
+      "requestErrors": 0,
+      "medianMs": 1987,
+      "p95Ms": 90776,
+      "costUsd": 0.0009016499999999999,
+      "promptTokens": 10534,
+      "completionTokens": 4125
+    },
+    "google/gemma-4-26b-a4b-it": {
+      "fields": 60,
+      "correct": 57,
+      "correctBeforeGrounding": 57,
+      "wrongNonempty": 1,
+      "missed": 2,
+      "rejectedValues": 0,
+      "invalidOutputs": 1,
+      "requestErrors": 0,
+      "medianMs": 1506,
+      "p95Ms": 96659,
+      "costUsd": 0.0027482020000000004,
+      "promptTokens": 8648,
+      "completionTokens": 6717
+    },
+    "anthropic/claude-haiku-5.5": {
+      "fields": 60,
+      "correct": 60,
+      "correctBeforeGrounding": 60,
+      "wrongNonempty": 0,
+      "missed": 0,
+      "rejectedValues": 0,
+      "invalidOutputs": 0,
+      "requestErrors": 0,
+      "medianMs": 1239,
+      "p95Ms": 4697,
+      "costUsd": 0.0057109,
+      "promptTokens": 43874,
+      "completionTokens": 2647
+    }
+  },
+  "fields": {
+    "rules": [
+      {
+        "set": "decisions",
+        "fixture": "company-first",
+        "field": "experience.company",
+        "expected": "Northstar Labs",
+        "selected": "Northstar Labs",
+        "raw": "Northstar Labs"
+      },
+      {
+        "set": "decisions",
+        "fixture": "company-first",
+        "field": "experience.title",
+        "expected": "Software Developer",
+        "selected": "Software Developer",
+        "raw": "Software Developer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "title-first",
+        "field": "experience.company",
+        "expected": "Maple Systems",
+        "selected": "Backend Engineer",
+        "raw": "Backend Engineer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "title-first",
+        "field": "experience.title",
+        "expected": "Backend Engineer",
+        "selected": "Maple Systems",
+        "raw": "Maple Systems"
+      },
+      {
+        "set": "decisions",
+        "fixture": "same-line-dates",
+        "field": "experience.company",
+        "expected": "Cedar Analytics",
+        "selected": "Cedar Analytics",
+        "raw": "Cedar Analytics"
+      },
+      {
+        "set": "decisions",
+        "fixture": "same-line-dates",
+        "field": "experience.title",
+        "expected": "Data Analyst",
+        "selected": "Data Analyst",
+        "raw": "Data Analyst"
+      },
+      {
+        "set": "decisions",
+        "fixture": "client-mention",
+        "field": "experience.company",
+        "expected": "Harbor Consulting",
+        "selected": "Harbor Consulting",
+        "raw": "Harbor Consulting"
+      },
+      {
+        "set": "decisions",
+        "fixture": "client-mention",
+        "field": "experience.title",
+        "expected": "Integration Developer",
+        "selected": "Integration Developer",
+        "raw": "Integration Developer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-employer",
+        "field": "experience.company",
+        "expected": "",
+        "selected": "Frontend Developer",
+        "raw": "Frontend Developer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-employer",
+        "field": "experience.title",
+        "expected": "Frontend Developer",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-title",
+        "field": "experience.company",
+        "expected": "Willow Software",
+        "selected": "Employer: Willow Software",
+        "raw": "Employer: Willow Software"
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-title",
+        "field": "experience.title",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "school-first",
+        "field": "education.school",
+        "expected": "Lakeside University",
+        "selected": "Lakeside University",
+        "raw": "Lakeside University"
+      },
+      {
+        "set": "decisions",
+        "fixture": "school-first",
+        "field": "education.degree",
+        "expected": "Bachelor of Science in Computer Science",
+        "selected": "Bachelor of Science in Computer Science",
+        "raw": "Bachelor of Science in Computer Science"
+      },
+      {
+        "set": "decisions",
+        "fixture": "degree-first",
+        "field": "education.school",
+        "expected": "Pinecrest University",
+        "selected": "Pinecrest University",
+        "raw": "Pinecrest University"
+      },
+      {
+        "set": "decisions",
+        "fixture": "degree-first",
+        "field": "education.degree",
+        "expected": "Master of Science in Software Engineering",
+        "selected": "Master of Science in Software Engineering",
+        "raw": "Master of Science in Software Engineering"
+      },
+      {
+        "set": "decisions",
+        "fixture": "undated-education",
+        "field": "education.school",
+        "expected": "Birch College",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "undated-education",
+        "field": "education.degree",
+        "expected": "Diploma in Computer Programming",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-name",
+        "field": "projects.name",
+        "expected": "StudyDock",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-name",
+        "field": "projects.url",
+        "expected": "https://example.invalid/studydock",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-no-url",
+        "field": "projects.name",
+        "expected": "TrailMapper",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-no-url",
+        "field": "projects.url",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "first-employer-boundary",
+        "field": "experience.company",
+        "expected": "Oak Studio",
+        "selected": "Oak Studio",
+        "raw": "Oak Studio"
+      },
+      {
+        "set": "decisions",
+        "fixture": "first-employer-boundary",
+        "field": "experience.title",
+        "expected": "Web Developer",
+        "selected": "Web Developer",
+        "raw": "Web Developer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-first",
+        "field": "experience.company",
+        "expected": "Silver Fern Digital",
+        "selected": "Silver Fern Digital",
+        "raw": "Silver Fern Digital"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-first",
+        "field": "experience.title",
+        "expected": "Quality Assurance Analyst",
+        "selected": "Quality Assurance Analyst",
+        "raw": "Quality Assurance Analyst"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-role-first",
+        "field": "experience.company",
+        "expected": "Copper Finch",
+        "selected": "Mobile Engineer",
+        "raw": "Mobile Engineer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-role-first",
+        "field": "experience.title",
+        "expected": "Mobile Engineer",
+        "selected": "Copper Finch",
+        "raw": "Copper Finch"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-labeled",
+        "field": "experience.company",
+        "expected": "Granite Orchard",
+        "selected": "Company: Granite Orchard",
+        "raw": "Company: Granite Orchard"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-labeled",
+        "field": "experience.title",
+        "expected": "Support Specialist",
+        "selected": "Position: Support Specialist",
+        "raw": "Position: Support Specialist"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-client",
+        "field": "experience.company",
+        "expected": "Helix Workshop",
+        "selected": "Helix Workshop",
+        "raw": "Helix Workshop"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-client",
+        "field": "experience.title",
+        "expected": "Automation Developer",
+        "selected": "Automation Developer",
+        "raw": "Automation Developer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-jobs",
+        "field": "experience.company",
+        "expected": "Cloudberry Works",
+        "selected": "Test Engineer",
+        "raw": "Test Engineer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-jobs",
+        "field": "experience.title",
+        "expected": "Test Engineer",
+        "selected": "Cloudberry Works",
+        "raw": "Cloudberry Works"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-three-columns",
+        "field": "experience.company",
+        "expected": "Aspen Signal",
+        "selected": "Aspen Signal",
+        "raw": "Aspen Signal"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-three-columns",
+        "field": "experience.title",
+        "expected": "Network Technician",
+        "selected": "Network Technician",
+        "raw": "Network Technician"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-absent",
+        "field": "experience.company",
+        "expected": "",
+        "selected": "Operations Coordinator",
+        "raw": "Operations Coordinator"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-absent",
+        "field": "experience.title",
+        "expected": "Operations Coordinator",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-title-absent",
+        "field": "experience.company",
+        "expected": "Sequoia Devices",
+        "selected": "Employer: Sequoia Devices",
+        "raw": "Employer: Sequoia Devices"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-title-absent",
+        "field": "experience.title",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-job",
+        "field": "experience.company",
+        "expected": "Juniper Grove",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-job",
+        "field": "experience.title",
+        "expected": "Interface Designer",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-school-degree",
+        "field": "education.school",
+        "expected": "Westhaven University",
+        "selected": "Westhaven University",
+        "raw": "Westhaven University"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-school-degree",
+        "field": "education.degree",
+        "expected": "Bachelor of Arts in Economics",
+        "selected": "Bachelor of Arts in Economics",
+        "raw": "Bachelor of Arts in Economics"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-degree-school",
+        "field": "education.school",
+        "expected": "Brookfield Polytechnic",
+        "selected": "Brookfield Polytechnic",
+        "raw": "Brookfield Polytechnic"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-degree-school",
+        "field": "education.degree",
+        "expected": "Diploma in Information Technology",
+        "selected": "Diploma in Information Technology",
+        "raw": "Diploma in Information Technology"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-school",
+        "field": "education.school",
+        "expected": "Meadowvale College",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-school",
+        "field": "education.degree",
+        "expected": "Certificate in Web Design",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-abbreviated-degree",
+        "field": "education.school",
+        "expected": "Ridgewater University",
+        "selected": "Ridgewater University",
+        "raw": "Ridgewater University"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-abbreviated-degree",
+        "field": "education.degree",
+        "expected": "BSc Computer Science",
+        "selected": "BSc Computer Science",
+        "raw": "BSc Computer Science"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-schools",
+        "field": "education.school",
+        "expected": "Ashford University",
+        "selected": "Ashford University",
+        "raw": "Ashford University"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-schools",
+        "field": "education.degree",
+        "expected": "Master of Science in Statistics",
+        "selected": "Master of Science in Statistics",
+        "raw": "Master of Science in Statistics"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project",
+        "field": "projects.name",
+        "expected": "PocketLedger",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project",
+        "field": "projects.url",
+        "expected": "https://example.invalid/pocketledger",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-labeled",
+        "field": "projects.name",
+        "expected": "GardenGrid",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-labeled",
+        "field": "projects.url",
+        "expected": "https://example.invalid/gardengrid",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-missing-link",
+        "field": "projects.name",
+        "expected": "EchoNotes",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-missing-link",
+        "field": "projects.url",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-unfamiliar-employer",
+        "field": "experience.company",
+        "expected": "Morrow & Kite",
+        "selected": "Frontend Developer",
+        "raw": "Frontend Developer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-unfamiliar-employer",
+        "field": "experience.title",
+        "expected": "Frontend Developer",
+        "selected": "Morrow & Kite",
+        "raw": "Morrow & Kite"
+      }
+    ],
+    "openai/gpt-oss-20b": [
+      {
+        "set": "decisions",
+        "fixture": "company-first",
+        "field": "experience.company",
+        "expected": "Northstar Labs",
+        "selected": "Northstar Labs",
+        "raw": "Northstar Labs"
+      },
+      {
+        "set": "decisions",
+        "fixture": "company-first",
+        "field": "experience.title",
+        "expected": "Software Developer",
+        "selected": "Software Developer",
+        "raw": "Software Developer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "title-first",
+        "field": "experience.company",
+        "expected": "Maple Systems",
+        "selected": "Maple Systems",
+        "raw": "Maple Systems"
+      },
+      {
+        "set": "decisions",
+        "fixture": "title-first",
+        "field": "experience.title",
+        "expected": "Backend Engineer",
+        "selected": "Backend Engineer",
+        "raw": "Backend Engineer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "same-line-dates",
+        "field": "experience.company",
+        "expected": "Cedar Analytics",
+        "selected": "Cedar Analytics",
+        "raw": "Cedar Analytics"
+      },
+      {
+        "set": "decisions",
+        "fixture": "same-line-dates",
+        "field": "experience.title",
+        "expected": "Data Analyst",
+        "selected": "Data Analyst",
+        "raw": "Data Analyst"
+      },
+      {
+        "set": "decisions",
+        "fixture": "client-mention",
+        "field": "experience.company",
+        "expected": "Harbor Consulting",
+        "selected": "Harbor Consulting",
+        "raw": "Harbor Consulting"
+      },
+      {
+        "set": "decisions",
+        "fixture": "client-mention",
+        "field": "experience.title",
+        "expected": "Integration Developer",
+        "selected": "Integration Developer",
+        "raw": "Integration Developer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-employer",
+        "field": "experience.company",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-employer",
+        "field": "experience.title",
+        "expected": "Frontend Developer",
+        "selected": "Frontend Developer",
+        "raw": "Frontend Developer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-title",
+        "field": "experience.company",
+        "expected": "Willow Software",
+        "selected": "Willow Software",
+        "raw": "Willow Software"
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-title",
+        "field": "experience.title",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "school-first",
+        "field": "education.school",
+        "expected": "Lakeside University",
+        "selected": "Lakeside University",
+        "raw": "Lakeside University"
+      },
+      {
+        "set": "decisions",
+        "fixture": "school-first",
+        "field": "education.degree",
+        "expected": "Bachelor of Science in Computer Science",
+        "selected": "Bachelor of Science in Computer Science",
+        "raw": "Bachelor of Science in Computer Science"
+      },
+      {
+        "set": "decisions",
+        "fixture": "degree-first",
+        "field": "education.school",
+        "expected": "Pinecrest University",
+        "selected": "Pinecrest University",
+        "raw": "Pinecrest University"
+      },
+      {
+        "set": "decisions",
+        "fixture": "degree-first",
+        "field": "education.degree",
+        "expected": "Master of Science in Software Engineering",
+        "selected": "Master of Science in Software Engineering",
+        "raw": "Master of Science in Software Engineering"
+      },
+      {
+        "set": "decisions",
+        "fixture": "undated-education",
+        "field": "education.school",
+        "expected": "Birch College",
+        "selected": "Birch College",
+        "raw": "Birch College"
+      },
+      {
+        "set": "decisions",
+        "fixture": "undated-education",
+        "field": "education.degree",
+        "expected": "Diploma in Computer Programming",
+        "selected": "Diploma in Computer Programming",
+        "raw": "Diploma in Computer Programming"
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-name",
+        "field": "projects.name",
+        "expected": "StudyDock",
+        "selected": "StudyDock",
+        "raw": "StudyDock"
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-name",
+        "field": "projects.url",
+        "expected": "https://example.invalid/studydock",
+        "selected": "https://example.invalid/studydock",
+        "raw": "https://example.invalid/studydock"
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-no-url",
+        "field": "projects.name",
+        "expected": "TrailMapper",
+        "selected": "TrailMapper",
+        "raw": "TrailMapper"
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-no-url",
+        "field": "projects.url",
+        "expected": "",
+        "selected": "No public URL is supplied.",
+        "raw": "No public URL is supplied."
+      },
+      {
+        "set": "decisions",
+        "fixture": "first-employer-boundary",
+        "field": "experience.company",
+        "expected": "Oak Studio",
+        "selected": "Oak Studio",
+        "raw": "Oak Studio"
+      },
+      {
+        "set": "decisions",
+        "fixture": "first-employer-boundary",
+        "field": "experience.title",
+        "expected": "Web Developer",
+        "selected": "Web Developer",
+        "raw": "Web Developer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-first",
+        "field": "experience.company",
+        "expected": "Silver Fern Digital",
+        "selected": "Silver Fern Digital",
+        "raw": "Silver Fern Digital"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-first",
+        "field": "experience.title",
+        "expected": "Quality Assurance Analyst",
+        "selected": "Quality Assurance Analyst",
+        "raw": "Quality Assurance Analyst"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-role-first",
+        "field": "experience.company",
+        "expected": "Copper Finch",
+        "selected": "Copper Finch",
+        "raw": "Copper Finch"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-role-first",
+        "field": "experience.title",
+        "expected": "Mobile Engineer",
+        "selected": "Mobile Engineer",
+        "raw": "Mobile Engineer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-labeled",
+        "field": "experience.company",
+        "expected": "Granite Orchard",
+        "selected": "Granite Orchard",
+        "raw": "Granite Orchard"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-labeled",
+        "field": "experience.title",
+        "expected": "Support Specialist",
+        "selected": "Support Specialist",
+        "raw": "Support Specialist"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-client",
+        "field": "experience.company",
+        "expected": "Helix Workshop",
+        "selected": "Helix Workshop",
+        "raw": "Helix Workshop"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-client",
+        "field": "experience.title",
+        "expected": "Automation Developer",
+        "selected": "Automation Developer",
+        "raw": "Automation Developer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-jobs",
+        "field": "experience.company",
+        "expected": "Cloudberry Works",
+        "selected": "Cloudberry Works",
+        "raw": "Cloudberry Works"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-jobs",
+        "field": "experience.title",
+        "expected": "Test Engineer",
+        "selected": "Test Engineer",
+        "raw": "Test Engineer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-three-columns",
+        "field": "experience.company",
+        "expected": "Aspen Signal",
+        "selected": "Aspen Signal",
+        "raw": "Aspen Signal"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-three-columns",
+        "field": "experience.title",
+        "expected": "Network Technician",
+        "selected": "Network Technician",
+        "raw": "Network Technician"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-absent",
+        "field": "experience.company",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-absent",
+        "field": "experience.title",
+        "expected": "Operations Coordinator",
+        "selected": "Operations Coordinator",
+        "raw": "Operations Coordinator"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-title-absent",
+        "field": "experience.company",
+        "expected": "Sequoia Devices",
+        "selected": "Sequoia Devices",
+        "raw": "Sequoia Devices"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-title-absent",
+        "field": "experience.title",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-job",
+        "field": "experience.company",
+        "expected": "Juniper Grove",
+        "selected": "Juniper Grove",
+        "raw": "Juniper Grove"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-job",
+        "field": "experience.title",
+        "expected": "Interface Designer",
+        "selected": "Interface Designer",
+        "raw": "Interface Designer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-school-degree",
+        "field": "education.school",
+        "expected": "Westhaven University",
+        "selected": "Westhaven University",
+        "raw": "Westhaven University"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-school-degree",
+        "field": "education.degree",
+        "expected": "Bachelor of Arts in Economics",
+        "selected": "Bachelor of Arts in Economics",
+        "raw": "Bachelor of Arts in Economics"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-degree-school",
+        "field": "education.school",
+        "expected": "Brookfield Polytechnic",
+        "selected": "Brookfield Polytechnic",
+        "raw": "Brookfield Polytechnic"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-degree-school",
+        "field": "education.degree",
+        "expected": "Diploma in Information Technology",
+        "selected": "Diploma in Information Technology",
+        "raw": "Diploma in Information Technology"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-school",
+        "field": "education.school",
+        "expected": "Meadowvale College",
+        "selected": "Meadowvale College",
+        "raw": "Meadowvale College"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-school",
+        "field": "education.degree",
+        "expected": "Certificate in Web Design",
+        "selected": "Certificate in Web Design",
+        "raw": "Certificate in Web Design"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-abbreviated-degree",
+        "field": "education.school",
+        "expected": "Ridgewater University",
+        "selected": "Ridgewater University",
+        "raw": "Ridgewater University"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-abbreviated-degree",
+        "field": "education.degree",
+        "expected": "BSc Computer Science",
+        "selected": "BSc Computer Science",
+        "raw": "BSc Computer Science"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-schools",
+        "field": "education.school",
+        "expected": "Ashford University",
+        "selected": "Ashford University",
+        "raw": "Ashford University"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-schools",
+        "field": "education.degree",
+        "expected": "Master of Science in Statistics",
+        "selected": "Master of Science in Statistics",
+        "raw": "Master of Science in Statistics"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project",
+        "field": "projects.name",
+        "expected": "PocketLedger",
+        "selected": "PocketLedger",
+        "raw": "PocketLedger"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project",
+        "field": "projects.url",
+        "expected": "https://example.invalid/pocketledger",
+        "selected": "https://example.invalid/pocketledger",
+        "raw": "https://example.invalid/pocketledger"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-labeled",
+        "field": "projects.name",
+        "expected": "GardenGrid",
+        "selected": "GardenGrid",
+        "raw": "GardenGrid"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-labeled",
+        "field": "projects.url",
+        "expected": "https://example.invalid/gardengrid",
+        "selected": "https://example.invalid/gardengrid",
+        "raw": "https://example.invalid/gardengrid"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-missing-link",
+        "field": "projects.name",
+        "expected": "EchoNotes",
+        "selected": "EchoNotes",
+        "raw": "EchoNotes"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-missing-link",
+        "field": "projects.url",
+        "expected": "",
+        "selected": "Public URL not supplied.",
+        "raw": "Public URL not supplied."
+      },
+      {
+        "set": "validation",
+        "fixture": "v-unfamiliar-employer",
+        "field": "experience.company",
+        "expected": "Morrow & Kite",
+        "selected": "Morrow & Kite",
+        "raw": "Morrow & Kite"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-unfamiliar-employer",
+        "field": "experience.title",
+        "expected": "Frontend Developer",
+        "selected": "Frontend Developer",
+        "raw": "Frontend Developer"
+      }
+    ],
+    "google/gemma-4-26b-a4b-it": [
+      {
+        "set": "decisions",
+        "fixture": "company-first",
+        "field": "experience.company",
+        "expected": "Northstar Labs",
+        "selected": "Northstar Labs",
+        "raw": "Northstar Labs"
+      },
+      {
+        "set": "decisions",
+        "fixture": "company-first",
+        "field": "experience.title",
+        "expected": "Software Developer",
+        "selected": "Software Developer",
+        "raw": "Software Developer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "title-first",
+        "field": "experience.company",
+        "expected": "Maple Systems",
+        "selected": "Maple Systems",
+        "raw": "Maple Systems"
+      },
+      {
+        "set": "decisions",
+        "fixture": "title-first",
+        "field": "experience.title",
+        "expected": "Backend Engineer",
+        "selected": "Backend Engineer",
+        "raw": "Backend Engineer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "same-line-dates",
+        "field": "experience.company",
+        "expected": "Cedar Analytics",
+        "selected": "Cedar Analytics",
+        "raw": "Cedar Analytics"
+      },
+      {
+        "set": "decisions",
+        "fixture": "same-line-dates",
+        "field": "experience.title",
+        "expected": "Data Analyst",
+        "selected": "Data Analyst",
+        "raw": "Data Analyst"
+      },
+      {
+        "set": "decisions",
+        "fixture": "client-mention",
+        "field": "experience.company",
+        "expected": "Harbor Consulting",
+        "selected": "Harbor Consulting",
+        "raw": "Harbor Consulting"
+      },
+      {
+        "set": "decisions",
+        "fixture": "client-mention",
+        "field": "experience.title",
+        "expected": "Integration Developer",
+        "selected": "Integration Developer",
+        "raw": "Integration Developer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-employer",
+        "field": "experience.company",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-employer",
+        "field": "experience.title",
+        "expected": "Frontend Developer",
+        "selected": "Frontend Developer",
+        "raw": "Frontend Developer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-title",
+        "field": "experience.company",
+        "expected": "Willow Software",
+        "selected": "Willow Software",
+        "raw": "Willow Software"
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-title",
+        "field": "experience.title",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "school-first",
+        "field": "education.school",
+        "expected": "Lakeside University",
+        "selected": "Lakeside University",
+        "raw": "Lakeside University"
+      },
+      {
+        "set": "decisions",
+        "fixture": "school-first",
+        "field": "education.degree",
+        "expected": "Bachelor of Science in Computer Science",
+        "selected": "Bachelor of Science in Computer Science",
+        "raw": "Bachelor of Science in Computer Science"
+      },
+      {
+        "set": "decisions",
+        "fixture": "degree-first",
+        "field": "education.school",
+        "expected": "Pinecrest University",
+        "selected": "Pinecrest University",
+        "raw": "Pinecrest University"
+      },
+      {
+        "set": "decisions",
+        "fixture": "degree-first",
+        "field": "education.degree",
+        "expected": "Master of Science in Software Engineering",
+        "selected": "Master of Science in Software Engineering",
+        "raw": "Master of Science in Software Engineering"
+      },
+      {
+        "set": "decisions",
+        "fixture": "undated-education",
+        "field": "education.school",
+        "expected": "Birch College",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "undated-education",
+        "field": "education.degree",
+        "expected": "Diploma in Computer Programming",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-name",
+        "field": "projects.name",
+        "expected": "StudyDock",
+        "selected": "StudyDock",
+        "raw": "StudyDock"
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-name",
+        "field": "projects.url",
+        "expected": "https://example.invalid/studydock",
+        "selected": "https://example.invalid/studydock",
+        "raw": "https://example.invalid/studydock"
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-no-url",
+        "field": "projects.name",
+        "expected": "TrailMapper",
+        "selected": "TrailMapper",
+        "raw": "TrailMapper"
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-no-url",
+        "field": "projects.url",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "first-employer-boundary",
+        "field": "experience.company",
+        "expected": "Oak Studio",
+        "selected": "Oak Studio",
+        "raw": "Oak Studio"
+      },
+      {
+        "set": "decisions",
+        "fixture": "first-employer-boundary",
+        "field": "experience.title",
+        "expected": "Web Developer",
+        "selected": "Web Developer",
+        "raw": "Web Developer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-first",
+        "field": "experience.company",
+        "expected": "Silver Fern Digital",
+        "selected": "Silver Fern Digital",
+        "raw": "Silver Fern Digital"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-first",
+        "field": "experience.title",
+        "expected": "Quality Assurance Analyst",
+        "selected": "Quality Assurance Analyst",
+        "raw": "Quality Assurance Analyst"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-role-first",
+        "field": "experience.company",
+        "expected": "Copper Finch",
+        "selected": "Copper Finch",
+        "raw": "Copper Finch"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-role-first",
+        "field": "experience.title",
+        "expected": "Mobile Engineer",
+        "selected": "Mobile Engineer",
+        "raw": "Mobile Engineer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-labeled",
+        "field": "experience.company",
+        "expected": "Granite Orchard",
+        "selected": "Granite Orchard",
+        "raw": "Granite Orchard"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-labeled",
+        "field": "experience.title",
+        "expected": "Support Specialist",
+        "selected": "Support Specialist",
+        "raw": "Support Specialist"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-client",
+        "field": "experience.company",
+        "expected": "Helix Workshop",
+        "selected": "Helix Workshop",
+        "raw": "Helix Workshop"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-client",
+        "field": "experience.title",
+        "expected": "Automation Developer",
+        "selected": "Automation Developer",
+        "raw": "Automation Developer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-jobs",
+        "field": "experience.company",
+        "expected": "Cloudberry Works",
+        "selected": "Cloudberry Works",
+        "raw": "Cloudberry Works"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-jobs",
+        "field": "experience.title",
+        "expected": "Test Engineer",
+        "selected": "Test Engineer",
+        "raw": "Test Engineer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-three-columns",
+        "field": "experience.company",
+        "expected": "Aspen Signal",
+        "selected": "Aspen Signal",
+        "raw": "Aspen Signal"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-three-columns",
+        "field": "experience.title",
+        "expected": "Network Technician",
+        "selected": "Network Technician",
+        "raw": "Network Technician"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-absent",
+        "field": "experience.company",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-absent",
+        "field": "experience.title",
+        "expected": "Operations Coordinator",
+        "selected": "Operations Coordinator",
+        "raw": "Operations Coordinator"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-title-absent",
+        "field": "experience.company",
+        "expected": "Sequoia Devices",
+        "selected": "Sequoia Devices",
+        "raw": "Sequoia Devices"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-title-absent",
+        "field": "experience.title",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-job",
+        "field": "experience.company",
+        "expected": "Juniper Grove",
+        "selected": "Juniper Grove",
+        "raw": "Juniper Grove"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-job",
+        "field": "experience.title",
+        "expected": "Interface Designer",
+        "selected": "Interface Designer",
+        "raw": "Interface Designer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-school-degree",
+        "field": "education.school",
+        "expected": "Westhaven University",
+        "selected": "Westhaven University",
+        "raw": "Westhaven University"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-school-degree",
+        "field": "education.degree",
+        "expected": "Bachelor of Arts in Economics",
+        "selected": "Bachelor of Arts in Economics",
+        "raw": "Bachelor of Arts in Economics"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-degree-school",
+        "field": "education.school",
+        "expected": "Brookfield Polytechnic",
+        "selected": "Brookfield Polytechnic",
+        "raw": "Brookfield Polytechnic"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-degree-school",
+        "field": "education.degree",
+        "expected": "Diploma in Information Technology",
+        "selected": "Diploma in Information Technology",
+        "raw": "Diploma in Information Technology"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-school",
+        "field": "education.school",
+        "expected": "Meadowvale College",
+        "selected": "Meadowvale College",
+        "raw": "Meadowvale College"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-school",
+        "field": "education.degree",
+        "expected": "Certificate in Web Design",
+        "selected": "Certificate in Web Design",
+        "raw": "Certificate in Web Design"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-abbreviated-degree",
+        "field": "education.school",
+        "expected": "Ridgewater University",
+        "selected": "Ridgewater University",
+        "raw": "Ridgewater University"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-abbreviated-degree",
+        "field": "education.degree",
+        "expected": "BSc Computer Science",
+        "selected": "BSc Computer Science",
+        "raw": "BSc Computer Science"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-schools",
+        "field": "education.school",
+        "expected": "Ashford University",
+        "selected": "Ashford University",
+        "raw": "Ashford University"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-schools",
+        "field": "education.degree",
+        "expected": "Master of Science in Statistics",
+        "selected": "Master of Science in Statistics",
+        "raw": "Master of Science in Statistics"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project",
+        "field": "projects.name",
+        "expected": "PocketLedger",
+        "selected": "PocketLedger",
+        "raw": "PocketLedger"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project",
+        "field": "projects.url",
+        "expected": "https://example.invalid/pocketledger",
+        "selected": "https://example.invalid/pocketledger",
+        "raw": "https://example.invalid/pocketledger"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-labeled",
+        "field": "projects.name",
+        "expected": "GardenGrid",
+        "selected": "GardenGrid",
+        "raw": "GardenGrid"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-labeled",
+        "field": "projects.url",
+        "expected": "https://example.invalid/gardengrid",
+        "selected": "https://example.invalid/gardengrid",
+        "raw": "https://example.invalid/gardengrid"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-missing-link",
+        "field": "projects.name",
+        "expected": "EchoNotes",
+        "selected": "EchoNotes",
+        "raw": "EchoNotes"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-missing-link",
+        "field": "projects.url",
+        "expected": "",
+        "selected": "Public URL not supplied.",
+        "raw": "Public URL not supplied."
+      },
+      {
+        "set": "validation",
+        "fixture": "v-unfamiliar-employer",
+        "field": "experience.company",
+        "expected": "Morrow & Kite",
+        "selected": "Morrow & Kite",
+        "raw": "Morrow & Kite"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-unfamiliar-employer",
+        "field": "experience.title",
+        "expected": "Frontend Developer",
+        "selected": "Frontend Developer",
+        "raw": "Frontend Developer"
+      }
+    ],
+    "anthropic/claude-haiku-5.5": [
+      {
+        "set": "decisions",
+        "fixture": "company-first",
+        "field": "experience.company",
+        "expected": "Northstar Labs",
+        "selected": "Northstar Labs",
+        "raw": "Northstar Labs"
+      },
+      {
+        "set": "decisions",
+        "fixture": "company-first",
+        "field": "experience.title",
+        "expected": "Software Developer",
+        "selected": "Software Developer",
+        "raw": "Software Developer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "title-first",
+        "field": "experience.company",
+        "expected": "Maple Systems",
+        "selected": "Maple Systems",
+        "raw": "Maple Systems"
+      },
+      {
+        "set": "decisions",
+        "fixture": "title-first",
+        "field": "experience.title",
+        "expected": "Backend Engineer",
+        "selected": "Backend Engineer",
+        "raw": "Backend Engineer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "same-line-dates",
+        "field": "experience.company",
+        "expected": "Cedar Analytics",
+        "selected": "Cedar Analytics",
+        "raw": "Cedar Analytics"
+      },
+      {
+        "set": "decisions",
+        "fixture": "same-line-dates",
+        "field": "experience.title",
+        "expected": "Data Analyst",
+        "selected": "Data Analyst",
+        "raw": "Data Analyst"
+      },
+      {
+        "set": "decisions",
+        "fixture": "client-mention",
+        "field": "experience.company",
+        "expected": "Harbor Consulting",
+        "selected": "Harbor Consulting",
+        "raw": "Harbor Consulting"
+      },
+      {
+        "set": "decisions",
+        "fixture": "client-mention",
+        "field": "experience.title",
+        "expected": "Integration Developer",
+        "selected": "Integration Developer",
+        "raw": "Integration Developer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-employer",
+        "field": "experience.company",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-employer",
+        "field": "experience.title",
+        "expected": "Frontend Developer",
+        "selected": "Frontend Developer",
+        "raw": "Frontend Developer"
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-title",
+        "field": "experience.company",
+        "expected": "Willow Software",
+        "selected": "Willow Software",
+        "raw": "Willow Software"
+      },
+      {
+        "set": "decisions",
+        "fixture": "missing-title",
+        "field": "experience.title",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "school-first",
+        "field": "education.school",
+        "expected": "Lakeside University",
+        "selected": "Lakeside University",
+        "raw": "Lakeside University"
+      },
+      {
+        "set": "decisions",
+        "fixture": "school-first",
+        "field": "education.degree",
+        "expected": "Bachelor of Science in Computer Science",
+        "selected": "Bachelor of Science in Computer Science",
+        "raw": "Bachelor of Science in Computer Science"
+      },
+      {
+        "set": "decisions",
+        "fixture": "degree-first",
+        "field": "education.school",
+        "expected": "Pinecrest University",
+        "selected": "Pinecrest University",
+        "raw": "Pinecrest University"
+      },
+      {
+        "set": "decisions",
+        "fixture": "degree-first",
+        "field": "education.degree",
+        "expected": "Master of Science in Software Engineering",
+        "selected": "Master of Science in Software Engineering",
+        "raw": "Master of Science in Software Engineering"
+      },
+      {
+        "set": "decisions",
+        "fixture": "undated-education",
+        "field": "education.school",
+        "expected": "Birch College",
+        "selected": "Birch College",
+        "raw": "Birch College"
+      },
+      {
+        "set": "decisions",
+        "fixture": "undated-education",
+        "field": "education.degree",
+        "expected": "Diploma in Computer Programming",
+        "selected": "Diploma in Computer Programming",
+        "raw": "Diploma in Computer Programming"
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-name",
+        "field": "projects.name",
+        "expected": "StudyDock",
+        "selected": "StudyDock",
+        "raw": "StudyDock"
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-name",
+        "field": "projects.url",
+        "expected": "https://example.invalid/studydock",
+        "selected": "https://example.invalid/studydock",
+        "raw": "https://example.invalid/studydock"
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-no-url",
+        "field": "projects.name",
+        "expected": "TrailMapper",
+        "selected": "TrailMapper",
+        "raw": "TrailMapper"
+      },
+      {
+        "set": "decisions",
+        "fixture": "project-no-url",
+        "field": "projects.url",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "decisions",
+        "fixture": "first-employer-boundary",
+        "field": "experience.company",
+        "expected": "Oak Studio",
+        "selected": "Oak Studio",
+        "raw": "Oak Studio"
+      },
+      {
+        "set": "decisions",
+        "fixture": "first-employer-boundary",
+        "field": "experience.title",
+        "expected": "Web Developer",
+        "selected": "Web Developer",
+        "raw": "Web Developer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-first",
+        "field": "experience.company",
+        "expected": "Silver Fern Digital",
+        "selected": "Silver Fern Digital",
+        "raw": "Silver Fern Digital"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-first",
+        "field": "experience.title",
+        "expected": "Quality Assurance Analyst",
+        "selected": "Quality Assurance Analyst",
+        "raw": "Quality Assurance Analyst"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-role-first",
+        "field": "experience.company",
+        "expected": "Copper Finch",
+        "selected": "Copper Finch",
+        "raw": "Copper Finch"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-role-first",
+        "field": "experience.title",
+        "expected": "Mobile Engineer",
+        "selected": "Mobile Engineer",
+        "raw": "Mobile Engineer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-labeled",
+        "field": "experience.company",
+        "expected": "Granite Orchard",
+        "selected": "Granite Orchard",
+        "raw": "Granite Orchard"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-labeled",
+        "field": "experience.title",
+        "expected": "Support Specialist",
+        "selected": "Support Specialist",
+        "raw": "Support Specialist"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-client",
+        "field": "experience.company",
+        "expected": "Helix Workshop",
+        "selected": "Helix Workshop",
+        "raw": "Helix Workshop"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-client",
+        "field": "experience.title",
+        "expected": "Automation Developer",
+        "selected": "Automation Developer",
+        "raw": "Automation Developer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-jobs",
+        "field": "experience.company",
+        "expected": "Cloudberry Works",
+        "selected": "Cloudberry Works",
+        "raw": "Cloudberry Works"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-jobs",
+        "field": "experience.title",
+        "expected": "Test Engineer",
+        "selected": "Test Engineer",
+        "raw": "Test Engineer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-three-columns",
+        "field": "experience.company",
+        "expected": "Aspen Signal",
+        "selected": "Aspen Signal",
+        "raw": "Aspen Signal"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-three-columns",
+        "field": "experience.title",
+        "expected": "Network Technician",
+        "selected": "Network Technician",
+        "raw": "Network Technician"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-absent",
+        "field": "experience.company",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-employer-absent",
+        "field": "experience.title",
+        "expected": "Operations Coordinator",
+        "selected": "Operations Coordinator",
+        "raw": "Operations Coordinator"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-title-absent",
+        "field": "experience.company",
+        "expected": "Sequoia Devices",
+        "selected": "Sequoia Devices",
+        "raw": "Sequoia Devices"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-title-absent",
+        "field": "experience.title",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-job",
+        "field": "experience.company",
+        "expected": "Juniper Grove",
+        "selected": "Juniper Grove",
+        "raw": "Juniper Grove"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-job",
+        "field": "experience.title",
+        "expected": "Interface Designer",
+        "selected": "Interface Designer",
+        "raw": "Interface Designer"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-school-degree",
+        "field": "education.school",
+        "expected": "Westhaven University",
+        "selected": "Westhaven University",
+        "raw": "Westhaven University"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-school-degree",
+        "field": "education.degree",
+        "expected": "Bachelor of Arts in Economics",
+        "selected": "Bachelor of Arts in Economics",
+        "raw": "Bachelor of Arts in Economics"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-degree-school",
+        "field": "education.school",
+        "expected": "Brookfield Polytechnic",
+        "selected": "Brookfield Polytechnic",
+        "raw": "Brookfield Polytechnic"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-degree-school",
+        "field": "education.degree",
+        "expected": "Diploma in Information Technology",
+        "selected": "Diploma in Information Technology",
+        "raw": "Diploma in Information Technology"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-school",
+        "field": "education.school",
+        "expected": "Meadowvale College",
+        "selected": "Meadowvale College",
+        "raw": "Meadowvale College"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-undated-school",
+        "field": "education.degree",
+        "expected": "Certificate in Web Design",
+        "selected": "Certificate in Web Design",
+        "raw": "Certificate in Web Design"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-abbreviated-degree",
+        "field": "education.school",
+        "expected": "Ridgewater University",
+        "selected": "Ridgewater University",
+        "raw": "Ridgewater University"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-abbreviated-degree",
+        "field": "education.degree",
+        "expected": "BSc Computer Science",
+        "selected": "BSc Computer Science",
+        "raw": "BSc Computer Science"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-schools",
+        "field": "education.school",
+        "expected": "Ashford University",
+        "selected": "Ashford University",
+        "raw": "Ashford University"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-two-schools",
+        "field": "education.degree",
+        "expected": "Master of Science in Statistics",
+        "selected": "Master of Science in Statistics",
+        "raw": "Master of Science in Statistics"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project",
+        "field": "projects.name",
+        "expected": "PocketLedger",
+        "selected": "PocketLedger",
+        "raw": "PocketLedger"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project",
+        "field": "projects.url",
+        "expected": "https://example.invalid/pocketledger",
+        "selected": "https://example.invalid/pocketledger",
+        "raw": "https://example.invalid/pocketledger"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-labeled",
+        "field": "projects.name",
+        "expected": "GardenGrid",
+        "selected": "GardenGrid",
+        "raw": "GardenGrid"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-labeled",
+        "field": "projects.url",
+        "expected": "https://example.invalid/gardengrid",
+        "selected": "https://example.invalid/gardengrid",
+        "raw": "https://example.invalid/gardengrid"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-missing-link",
+        "field": "projects.name",
+        "expected": "EchoNotes",
+        "selected": "EchoNotes",
+        "raw": "EchoNotes"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-project-missing-link",
+        "field": "projects.url",
+        "expected": "",
+        "selected": "",
+        "raw": ""
+      },
+      {
+        "set": "validation",
+        "fixture": "v-unfamiliar-employer",
+        "field": "experience.company",
+        "expected": "Morrow & Kite",
+        "selected": "Morrow & Kite",
+        "raw": "Morrow & Kite"
+      },
+      {
+        "set": "validation",
+        "fixture": "v-unfamiliar-employer",
+        "field": "experience.title",
+        "expected": "Frontend Developer",
+        "selected": "Frontend Developer",
+        "raw": "Frontend Developer"
+      }
+    ]
+  },
+  "runs": [
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "company-first",
+      "index": 0,
+      "raw": {
+        "experience": [
+          {
+            "company": "Northstar Labs",
+            "title": "Software Developer",
+            "location": "",
+            "startDate": "Jan 2023",
+            "endDate": "Present",
+            "description": "• Built a scheduling dashboard."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Northstar Labs",
+            "title": "Software Developer",
+            "location": "",
+            "startDate": "Jan 2023",
+            "endDate": "Present",
+            "description": "• Built a scheduling dashboard."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2381.393778,
+      "attempts": 1,
+      "provider": "AkashML",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002508,
+        "prompt_tokens": 324,
+        "completion_tokens": 186
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "title-first",
+      "index": 1,
+      "raw": {
+        "experience": [
+          {
+            "company": "Maple Systems",
+            "title": "Backend Engineer",
+            "location": "",
+            "startDate": "Feb 2021",
+            "endDate": "Aug 2023",
+            "description": "Maintained billing APIs."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Maple Systems",
+            "title": "Backend Engineer",
+            "location": "",
+            "startDate": "Feb 2021",
+            "endDate": "Aug 2023",
+            "description": "Maintained billing APIs."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1983.181394,
+      "attempts": 1,
+      "provider": "AkashML",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0000207,
+        "prompt_tokens": 325,
+        "completion_tokens": 142
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "same-line-dates",
+      "index": 2,
+      "raw": {
+        "experience": [
+          {
+            "company": "Cedar Analytics",
+            "title": "Data Analyst",
+            "location": "",
+            "startDate": "2020 – 2022",
+            "endDate": "",
+            "description": "• Analyzed synthetic sales data."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Cedar Analytics",
+            "title": "Data Analyst",
+            "location": "",
+            "startDate": "2020 – 2022",
+            "endDate": "",
+            "description": "• Analyzed synthetic sales data."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1073.588006,
+      "attempts": 1,
+      "provider": "Groq",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0000948,
+        "prompt_tokens": 756,
+        "completion_tokens": 127
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "client-mention",
+      "index": 3,
+      "raw": {
+        "experience": [
+          {
+            "company": "Harbor Consulting",
+            "title": "Integration Developer",
+            "location": "",
+            "startDate": "Mar 2022",
+            "endDate": "Nov 2024",
+            "description": "Delivered a connector for client Redbrick Retail."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Harbor Consulting",
+            "title": "Integration Developer",
+            "location": "",
+            "startDate": "Mar 2022",
+            "endDate": "Nov 2024",
+            "description": "Delivered a connector for client Redbrick Retail."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2028.3128870000003,
+      "attempts": 1,
+      "provider": "DeepInfra",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00003124,
+        "prompt_tokens": 318,
+        "completion_tokens": 155
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "missing-employer",
+      "index": 4,
+      "raw": {
+        "experience": [
+          {
+            "company": "",
+            "title": "Frontend Developer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "2023",
+            "description": "Built accessible forms."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "",
+            "title": "Frontend Developer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "2023",
+            "description": "Built accessible forms."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 92542.80965600001,
+      "attempts": 2,
+      "provider": "DekaLLM",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000022783,
+        "prompt_tokens": 327,
+        "completion_tokens": 95
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "missing-title",
+      "index": 5,
+      "raw": {
+        "experience": [
+          {
+            "company": "Willow Software",
+            "title": "",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2021",
+            "description": "Updated internal tools."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Willow Software",
+            "title": "",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2021",
+            "description": "Updated internal tools."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1190.4171530000003,
+      "attempts": 1,
+      "provider": "AkashML",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0000191,
+        "prompt_tokens": 330,
+        "completion_tokens": 125
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "school-first",
+      "index": 6,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Lakeside University",
+            "degree": "Bachelor of Science in Computer Science",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "Sep 2018",
+            "endDate": "May 2022",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Lakeside University",
+            "degree": "Bachelor of Science in Computer Science",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "Sep 2018",
+            "endDate": "May 2022",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2295.8221529999996,
+      "attempts": 1,
+      "provider": "AkashML",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000019,
+        "prompt_tokens": 325,
+        "completion_tokens": 125
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "degree-first",
+      "index": 7,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Pinecrest University",
+            "degree": "Master of Science in Software Engineering",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "2024",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Pinecrest University",
+            "degree": "Master of Science in Software Engineering",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "2024",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1767.244157,
+      "attempts": 1,
+      "provider": "CoreWeave",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002459,
+        "prompt_tokens": 317,
+        "completion_tokens": 116
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "undated-education",
+      "index": 8,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Birch College",
+            "degree": "Diploma in Computer Programming",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Birch College",
+            "degree": "Diploma in Computer Programming",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2943.6816029999995,
+      "attempts": 1,
+      "provider": "AkashML",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002456,
+        "prompt_tokens": 313,
+        "completion_tokens": 183
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "project-name",
+      "index": 9,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "StudyDock",
+            "url": "https://example.invalid/studydock",
+            "description": "Built a local study timer using JavaScript."
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "StudyDock",
+            "url": "https://example.invalid/studydock",
+            "description": "Built a local study timer using JavaScript."
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2257.9512860000004,
+      "attempts": 1,
+      "provider": "Parasail",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002629,
+        "prompt_tokens": 323,
+        "completion_tokens": 132
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "project-no-url",
+      "index": 10,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "TrailMapper",
+            "url": "No public URL is supplied.",
+            "description": ""
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "TrailMapper",
+            "url": "No public URL is supplied.",
+            "description": ""
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1484.6188970000003,
+      "attempts": 1,
+      "provider": "DekaLLM",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000015913,
+        "prompt_tokens": 317,
+        "completion_tokens": 48
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "first-employer-boundary",
+      "index": 11,
+      "raw": {
+        "experience": [
+          {
+            "company": "Oak Studio",
+            "title": "Web Developer",
+            "location": "",
+            "startDate": "2019",
+            "endDate": "2021",
+            "description": "Built dashboards."
+          },
+          {
+            "company": "River Labs",
+            "title": "Platform Engineer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "Present",
+            "description": "Maintained services."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Oak Studio",
+            "title": "Web Developer",
+            "location": "",
+            "startDate": "2019",
+            "endDate": "2021",
+            "description": "Built dashboards."
+          },
+          {
+            "company": "River Labs",
+            "title": "Platform Engineer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "Present",
+            "description": "Maintained services."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2500.849256999999,
+      "attempts": 1,
+      "provider": "DeepInfra",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00004192,
+        "prompt_tokens": 324,
+        "completion_tokens": 230
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-employer-first",
+      "index": 12,
+      "raw": {
+        "experience": [
+          {
+            "company": "Silver Fern Digital",
+            "title": "Quality Assurance Analyst",
+            "location": "",
+            "startDate": "Apr 2022",
+            "endDate": "Jun 2024",
+            "description": "• Tested booking workflows."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Silver Fern Digital",
+            "title": "Quality Assurance Analyst",
+            "location": "",
+            "startDate": "Apr 2022",
+            "endDate": "Jun 2024",
+            "description": "• Tested booking workflows."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2855.502297,
+      "attempts": 1,
+      "provider": "AkashML",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002444,
+        "prompt_tokens": 327,
+        "completion_tokens": 179
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-role-first",
+      "index": 13,
+      "raw": {
+        "experience": [
+          {
+            "company": "Copper Finch",
+            "title": "Mobile Engineer",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2023",
+            "description": "Built a transit app."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Copper Finch",
+            "title": "Mobile Engineer",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2023",
+            "description": "Built a transit app."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1743.5989210000007,
+      "attempts": 1,
+      "provider": "DekaLLM",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000022749,
+        "prompt_tokens": 321,
+        "completion_tokens": 96
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-labeled",
+      "index": 14,
+      "raw": {
+        "experience": [
+          {
+            "company": "Granite Orchard",
+            "title": "Support Specialist",
+            "location": "",
+            "startDate": "2023",
+            "endDate": "Present",
+            "description": "Resolved account issues."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Granite Orchard",
+            "title": "Support Specialist",
+            "location": "",
+            "startDate": "2023",
+            "endDate": "Present",
+            "description": "Resolved account issues."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1398.798369,
+      "attempts": 1,
+      "provider": "DekaLLM",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000022725,
+        "prompt_tokens": 325,
+        "completion_tokens": 95
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-client",
+      "index": 15,
+      "raw": {
+        "experience": [
+          {
+            "company": "Helix Workshop",
+            "title": "Automation Developer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "2024",
+            "description": "• Implemented systems for client Blue Harbor Bank."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Helix Workshop",
+            "title": "Automation Developer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "2024",
+            "description": "• Implemented systems for client Blue Harbor Bank."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2750.5418899999986,
+      "attempts": 1,
+      "provider": "Parasail",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002749,
+        "prompt_tokens": 328,
+        "completion_tokens": 139
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-two-jobs",
+      "index": 16,
+      "raw": {
+        "experience": [
+          {
+            "company": "Cloudberry Works",
+            "title": "Test Engineer",
+            "location": "",
+            "startDate": "2018",
+            "endDate": "2020",
+            "description": "• Tested devices."
+          },
+          {
+            "company": "Glacier Computing",
+            "title": "Product Manager",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "Present",
+            "description": "• Managed a product team."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Cloudberry Works",
+            "title": "Test Engineer",
+            "location": "",
+            "startDate": "2018",
+            "endDate": "2020",
+            "description": "• Tested devices."
+          },
+          {
+            "company": "Glacier Computing",
+            "title": "Product Manager",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "Present",
+            "description": "• Managed a product team."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 5140.776567000001,
+      "attempts": 1,
+      "provider": "DekaLLM",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00003996,
+        "prompt_tokens": 340,
+        "completion_tokens": 215
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-three-columns",
+      "index": 17,
+      "raw": {
+        "experience": [
+          {
+            "company": "Aspen Signal",
+            "title": "Network Technician",
+            "location": "Kingston, ON",
+            "startDate": "2019",
+            "endDate": "2022",
+            "description": "Installed network devices."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Aspen Signal",
+            "title": "Network Technician",
+            "location": "Kingston, ON",
+            "startDate": "2019",
+            "endDate": "2022",
+            "description": "Installed network devices."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2598.907163,
+      "attempts": 1,
+      "provider": "Parasail",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002971,
+        "prompt_tokens": 327,
+        "completion_tokens": 154
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-employer-absent",
+      "index": 18,
+      "raw": {
+        "experience": [
+          {
+            "company": "",
+            "title": "Operations Coordinator",
+            "location": "",
+            "startDate": "2022 – Present",
+            "endDate": "",
+            "description": "• Scheduled field visits."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "",
+            "title": "Operations Coordinator",
+            "location": "",
+            "startDate": "2022 – Present",
+            "endDate": "",
+            "description": "• Scheduled field visits."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2173.8294380000007,
+      "attempts": 1,
+      "provider": "AkashML",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002222,
+        "prompt_tokens": 321,
+        "completion_tokens": 158
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-title-absent",
+      "index": 19,
+      "raw": {
+        "experience": [
+          {
+            "company": "Sequoia Devices",
+            "title": "",
+            "location": "",
+            "startDate": "2017",
+            "endDate": "2019",
+            "description": "Maintained diagnostic equipment."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Sequoia Devices",
+            "title": "",
+            "location": "",
+            "startDate": "2017",
+            "endDate": "2019",
+            "description": "Maintained diagnostic equipment."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 90776.38974199998,
+      "attempts": 2,
+      "provider": "Groq",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00010785,
+        "prompt_tokens": 758,
+        "completion_tokens": 170
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-undated-job",
+      "index": 20,
+      "raw": {
+        "experience": [
+          {
+            "company": "Juniper Grove",
+            "title": "Interface Designer",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": "Designed navigation prototypes."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Juniper Grove",
+            "title": "Interface Designer",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": "Designed navigation prototypes."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1749.4861,
+      "attempts": 1,
+      "provider": "Parasail",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002474,
+        "prompt_tokens": 316,
+        "completion_tokens": 122
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-school-degree",
+      "index": 21,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Westhaven University",
+            "degree": "Bachelor of Arts in Economics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2015",
+            "endDate": "2019",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Westhaven University",
+            "degree": "Bachelor of Arts in Economics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2015",
+            "endDate": "2019",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 3217.7008320000023,
+      "attempts": 1,
+      "provider": "DekaLLM",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002006,
+        "prompt_tokens": 320,
+        "completion_tokens": 77
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-degree-school",
+      "index": 22,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Brookfield Polytechnic",
+            "degree": "Diploma in Information Technology",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2022",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Brookfield Polytechnic",
+            "degree": "Diploma in Information Technology",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2022",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1352.4687510000003,
+      "attempts": 1,
+      "provider": "DekaLLM",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002006,
+        "prompt_tokens": 320,
+        "completion_tokens": 77
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-undated-school",
+      "index": 23,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Meadowvale College",
+            "degree": "Certificate in Web Design",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Meadowvale College",
+            "degree": "Certificate in Web Design",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1631.6968620000007,
+      "attempts": 1,
+      "provider": "DeepInfra",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00003042,
+        "prompt_tokens": 300,
+        "completion_tokens": 153
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-abbreviated-degree",
+      "index": 24,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Ridgewater University",
+            "degree": "BSc Computer Science",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2016 – 2020",
+            "endDate": "",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Ridgewater University",
+            "degree": "BSc Computer Science",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2016 – 2020",
+            "endDate": "",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1759.9095379999999,
+      "attempts": 1,
+      "provider": "AkashML",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002512,
+        "prompt_tokens": 321,
+        "completion_tokens": 187
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-two-schools",
+      "index": 25,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Ashford University",
+            "degree": "Master of Science in Statistics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "2024",
+            "description": ""
+          },
+          {
+            "school": "Crestwood College",
+            "degree": "Diploma in Data Analytics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2019",
+            "endDate": "2021",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Ashford University",
+            "degree": "Master of Science in Statistics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "2024",
+            "description": ""
+          },
+          {
+            "school": "Crestwood College",
+            "degree": "Diploma in Data Analytics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2019",
+            "endDate": "2021",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1888.255806000001,
+      "attempts": 1,
+      "provider": "CoreWeave",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00003261,
+        "prompt_tokens": 333,
+        "completion_tokens": 174
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-project",
+      "index": 26,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "PocketLedger",
+            "url": "https://example.invalid/pocketledger",
+            "description": "Built an offline expense log."
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "PocketLedger",
+            "url": "https://example.invalid/pocketledger",
+            "description": "Built an offline expense log."
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1894.6624239999983,
+      "attempts": 1,
+      "provider": "Parasail",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002591,
+        "prompt_tokens": 320,
+        "completion_tokens": 129
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-project-labeled",
+      "index": 27,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "GardenGrid",
+            "url": "https://example.invalid/gardengrid",
+            "description": ""
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "GardenGrid",
+            "url": "https://example.invalid/gardengrid",
+            "description": ""
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1059.3886200000015,
+      "attempts": 1,
+      "provider": "CoreWeave",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00002543,
+        "prompt_tokens": 319,
+        "completion_tokens": 122
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-project-missing-link",
+      "index": 28,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "EchoNotes",
+            "url": "Public URL not supplied.",
+            "description": "Recorded local meeting notes."
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "EchoNotes",
+            "url": "Public URL not supplied.",
+            "description": "Recorded local meeting notes."
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1291.8450250000024,
+      "attempts": 1,
+      "provider": "AkashML",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00001482,
+        "prompt_tokens": 316,
+        "completion_tokens": 85
+      }
+    },
+    {
+      "model": "openai/gpt-oss-20b",
+      "fixture": "v-unfamiliar-employer",
+      "index": 29,
+      "raw": {
+        "experience": [
+          {
+            "company": "Morrow & Kite",
+            "title": "Frontend Developer",
+            "location": "",
+            "startDate": "2024",
+            "endDate": "Present",
+            "description": "Built accessible checkout forms."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Morrow & Kite",
+            "title": "Frontend Developer",
+            "location": "",
+            "startDate": "2024",
+            "endDate": "Present",
+            "description": "Built accessible checkout forms."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1987.1675299999988,
+      "attempts": 1,
+      "provider": "AkashML",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00001936,
+        "prompt_tokens": 323,
+        "completion_tokens": 129
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "company-first",
+      "index": 0,
+      "raw": {
+        "experience": [
+          {
+            "company": "Northstar Labs",
+            "title": "Software Developer",
+            "location": "",
+            "startDate": "Jan 2023",
+            "endDate": "Present",
+            "description": "• Built a scheduling dashboard."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Northstar Labs",
+            "title": "Software Developer",
+            "location": "",
+            "startDate": "Jan 2023",
+            "endDate": "Present",
+            "description": "• Built a scheduling dashboard."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1605.811135,
+      "attempts": 1,
+      "provider": "Parasail",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00007531,
+        "prompt_tokens": 287,
+        "completion_tokens": 95
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "title-first",
+      "index": 1,
+      "raw": {
+        "experience": [
+          {
+            "company": "Maple Systems",
+            "title": "Backend Engineer",
+            "location": "",
+            "startDate": "Feb 2021",
+            "endDate": "Aug 2023",
+            "description": "• Maintained billing APIs."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Maple Systems",
+            "title": "Backend Engineer",
+            "location": "",
+            "startDate": "Feb 2021",
+            "endDate": "Aug 2023",
+            "description": "• Maintained billing APIs."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 4119.744499999997,
+      "attempts": 1,
+      "provider": "NextBit",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0000419175,
+        "prompt_tokens": 291,
+        "completion_tokens": 99
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "same-line-dates",
+      "index": 2,
+      "raw": {
+        "experience": [
+          {
+            "company": "Cedar Analytics",
+            "title": "Data Analyst",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2022",
+            "description": "• Analyzed synthetic sales data."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Cedar Analytics",
+            "title": "Data Analyst",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2022",
+            "description": "• Analyzed synthetic sales data."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1216.529355999999,
+      "attempts": 1,
+      "provider": "DeepInfra",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0000424,
+        "prompt_tokens": 290,
+        "completion_tokens": 65
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "client-mention",
+      "index": 3,
+      "raw": {
+        "experience": [
+          {
+            "company": "Harbor Consulting",
+            "title": "Integration Developer",
+            "location": "",
+            "startDate": "Mar 2022",
+            "endDate": "Nov 2024",
+            "description": "• Delivered a connector for client Redbrick Retail."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Harbor Consulting",
+            "title": "Integration Developer",
+            "location": "",
+            "startDate": "Mar 2022",
+            "endDate": "Nov 2024",
+            "description": "• Delivered a connector for client Redbrick Retail."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1609.999187999998,
+      "attempts": 1,
+      "provider": "NextBit",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00004338,
+        "prompt_tokens": 296,
+        "completion_tokens": 104
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "missing-employer",
+      "index": 4,
+      "raw": {
+        "experience": [
+          {
+            "company": "",
+            "title": "Frontend Developer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "2023",
+            "description": "• Built accessible forms."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "",
+            "title": "Frontend Developer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "2023",
+            "description": "• Built accessible forms."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 960.0231679999997,
+      "attempts": 1,
+      "provider": "DeepInfra",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00004091,
+        "prompt_tokens": 293,
+        "completion_tokens": 60
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "missing-title",
+      "index": 5,
+      "raw": {
+        "experience": [
+          {
+            "company": "Willow Software",
+            "title": "",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2021",
+            "description": "• Updated internal tools."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Willow Software",
+            "title": "",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2021",
+            "description": "• Updated internal tools."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 603.7666529999988,
+      "attempts": 1,
+      "provider": "Makora",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000041024,
+        "prompt_tokens": 296,
+        "completion_tokens": 91
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "school-first",
+      "index": 6,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Lakeside University",
+            "degree": "Bachelor of Science in Computer Science",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "Sep 2018",
+            "endDate": "May 2022",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Lakeside University",
+            "degree": "Bachelor of Science in Computer Science",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "Sep 2018",
+            "endDate": "May 2022",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1167.3267290000003,
+      "attempts": 1,
+      "provider": "Parasail",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00008237,
+        "prompt_tokens": 289,
+        "completion_tokens": 112
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "degree-first",
+      "index": 7,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Pinecrest University",
+            "degree": "Master of Science in Software Engineering",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "2024",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Pinecrest University",
+            "degree": "Master of Science in Software Engineering",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "2024",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1721.107946,
+      "attempts": 1,
+      "provider": "NextBit",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0000435375,
+        "prompt_tokens": 285,
+        "completion_tokens": 108
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "undated-education",
+      "index": 8,
+      "error": {
+        "kind": "invalid_output",
+        "message": "Invalid output: Empty model response"
+      },
+      "ms": 137949.14456500002,
+      "attempts": 2,
+      "usage": {
+        "cost": 0.0012159,
+        "prompt_tokens": 271,
+        "completion_tokens": 4000
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "project-name",
+      "index": 9,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "StudyDock",
+            "url": "https://example.invalid/studydock",
+            "description": "Built a local study timer using JavaScript."
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "StudyDock",
+            "url": "https://example.invalid/studydock",
+            "description": "Built a local study timer using JavaScript."
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1456.839505,
+      "attempts": 1,
+      "provider": "NextBit",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000036405,
+        "prompt_tokens": 286,
+        "completion_tokens": 76
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "project-no-url",
+      "index": 10,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "TrailMapper",
+            "url": "",
+            "description": "An independent hiking-map project. No public URL is supplied."
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "TrailMapper",
+            "url": "",
+            "description": "An independent hiking-map project. No public URL is supplied."
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2105.8627490000035,
+      "attempts": 1,
+      "provider": "Parasail",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00006493,
+        "prompt_tokens": 281,
+        "completion_tokens": 71
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "first-employer-boundary",
+      "index": 11,
+      "raw": {
+        "experience": [
+          {
+            "company": "Oak Studio",
+            "title": "Web Developer",
+            "location": "",
+            "startDate": "2019",
+            "endDate": "2021",
+            "description": "• Built dashboards."
+          },
+          {
+            "company": "River Labs",
+            "title": "Platform Engineer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "Present",
+            "description": "• Maintained services."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Oak Studio",
+            "title": "Web Developer",
+            "location": "",
+            "startDate": "2019",
+            "endDate": "2021",
+            "description": "• Built dashboards."
+          },
+          {
+            "company": "River Labs",
+            "title": "Platform Engineer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "Present",
+            "description": "• Maintained services."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 5478.035564999998,
+      "attempts": 1,
+      "provider": "NextBit",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0000550125,
+        "prompt_tokens": 305,
+        "completion_tokens": 153
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-employer-first",
+      "index": 12,
+      "raw": {
+        "experience": [
+          {
+            "company": "Silver Fern Digital",
+            "title": "Quality Assurance Analyst",
+            "location": "",
+            "startDate": "Apr 2022",
+            "endDate": "Jun 2024",
+            "description": "• Tested booking workflows."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Silver Fern Digital",
+            "title": "Quality Assurance Analyst",
+            "location": "",
+            "startDate": "Apr 2022",
+            "endDate": "Jun 2024",
+            "description": "• Tested booking workflows."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1762.4463539999997,
+      "attempts": 1,
+      "provider": "NextBit",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00004221,
+        "prompt_tokens": 292,
+        "completion_tokens": 100
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-role-first",
+      "index": 13,
+      "raw": {
+        "experience": [
+          {
+            "company": "Copper Finch",
+            "title": "Mobile Engineer",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2023",
+            "description": "• Built a transit app."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Copper Finch",
+            "title": "Mobile Engineer",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2023",
+            "description": "• Built a transit app."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1627.6901409999991,
+      "attempts": 1,
+      "provider": "NextBit",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000040815,
+        "prompt_tokens": 288,
+        "completion_tokens": 95
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-labeled",
+      "index": 14,
+      "raw": {
+        "experience": [
+          {
+            "company": "Granite Orchard",
+            "title": "Support Specialist",
+            "location": "",
+            "startDate": "2023",
+            "endDate": "Present",
+            "description": "• Resolved account issues."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Granite Orchard",
+            "title": "Support Specialist",
+            "location": "",
+            "startDate": "2023",
+            "endDate": "Present",
+            "description": "• Resolved account issues."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1115.9881049999967,
+      "attempts": 1,
+      "provider": "DeepInfra",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00004083,
+        "prompt_tokens": 287,
+        "completion_tokens": 61
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-client",
+      "index": 15,
+      "raw": {
+        "experience": [
+          {
+            "company": "Helix Workshop",
+            "title": "Automation Developer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "2024",
+            "description": "• Implemented systems for client Blue Harbor Bank."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Helix Workshop",
+            "title": "Automation Developer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "2024",
+            "description": "• Implemented systems for client Blue Harbor Bank."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 835.209087999996,
+      "attempts": 1,
+      "provider": "Parasail",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00007756,
+        "prompt_tokens": 292,
+        "completion_tokens": 99
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-two-jobs",
+      "index": 16,
+      "raw": {
+        "experience": [
+          {
+            "company": "Cloudberry Works",
+            "title": "Test Engineer",
+            "location": "",
+            "startDate": "2018",
+            "endDate": "2020",
+            "description": "• Tested devices."
+          },
+          {
+            "company": "Glacier Computing",
+            "title": "Product Manager",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "Present",
+            "description": "• Managed a product team."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Cloudberry Works",
+            "title": "Test Engineer",
+            "location": "",
+            "startDate": "2018",
+            "endDate": "2020",
+            "description": "• Tested devices."
+          },
+          {
+            "company": "Glacier Computing",
+            "title": "Product Manager",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "Present",
+            "description": "• Managed a product team."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 788.929231999995,
+      "attempts": 1,
+      "provider": "Makora",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000059,
+        "prompt_tokens": 308,
+        "completion_tokens": 156
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-three-columns",
+      "index": 17,
+      "raw": {
+        "experience": [
+          {
+            "company": "Aspen Signal",
+            "title": "Network Technician",
+            "location": "Kingston, ON",
+            "startDate": "2019",
+            "endDate": "2022",
+            "description": "• Installed network devices."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Aspen Signal",
+            "title": "Network Technician",
+            "location": "Kingston, ON",
+            "startDate": "2019",
+            "endDate": "2022",
+            "description": "• Installed network devices."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1506.2302400000044,
+      "attempts": 1,
+      "provider": "Venice",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00007809,
+        "prompt_tokens": 293,
+        "completion_tokens": 100
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-employer-absent",
+      "index": 18,
+      "raw": {
+        "experience": [
+          {
+            "company": "",
+            "title": "Operations Coordinator",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "Present",
+            "description": "• Scheduled field visits."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "",
+            "title": "Operations Coordinator",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "Present",
+            "description": "• Scheduled field visits."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2655.052920000002,
+      "attempts": 1,
+      "provider": "Makora",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000039534,
+        "prompt_tokens": 285,
+        "completion_tokens": 88
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-title-absent",
+      "index": 19,
+      "raw": {
+        "experience": [
+          {
+            "company": "Sequoia Devices",
+            "title": "",
+            "location": "",
+            "startDate": "2017",
+            "endDate": "2019",
+            "description": "• Maintained diagnostic equipment."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Sequoia Devices",
+            "title": "",
+            "location": "",
+            "startDate": "2017",
+            "endDate": "2019",
+            "description": "• Maintained diagnostic equipment."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1360.2477659999931,
+      "attempts": 1,
+      "provider": "CoreWeave",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000057,
+        "prompt_tokens": 291,
+        "completion_tokens": 93
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-undated-job",
+      "index": 20,
+      "raw": {
+        "experience": [
+          {
+            "company": "Juniper Grove",
+            "title": "Interface Designer",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": "• Designed navigation prototypes."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Juniper Grove",
+            "title": "Interface Designer",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": "• Designed navigation prototypes."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 782.7860460000011,
+      "attempts": 1,
+      "provider": "Parasail",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00005721,
+        "prompt_tokens": 277,
+        "completion_tokens": 53
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-school-degree",
+      "index": 21,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Westhaven University",
+            "degree": "Bachelor of Arts in Economics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2015",
+            "endDate": "2019",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Westhaven University",
+            "degree": "Bachelor of Arts in Economics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2015",
+            "endDate": "2019",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1211.767147999999,
+      "attempts": 1,
+      "provider": "Makora",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00004563,
+        "prompt_tokens": 285,
+        "completion_tokens": 107
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-degree-school",
+      "index": 22,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Brookfield Polytechnic",
+            "degree": "Diploma in Information Technology",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2022",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Brookfield Polytechnic",
+            "degree": "Diploma in Information Technology",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2022",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 5560.459568999999,
+      "attempts": 1,
+      "provider": "CoreWeave",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0000597,
+        "prompt_tokens": 282,
+        "completion_tokens": 105
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-undated-school",
+      "index": 23,
+      "raw": {
+        "education": [
+          {
+            "degree": "Certificate in Web Design",
+            "description": "",
+            "endDate": "",
+            "fieldOfStudy": "",
+            "location": "",
+            "school": "Meadowvale College",
+            "startDate": ""
+          }
+        ],
+        "experience": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Meadowvale College",
+            "degree": "Certificate in Web Design",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 96658.59697799999,
+      "attempts": 2,
+      "provider": "SiliconFlow",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00007462,
+        "prompt_tokens": 273,
+        "completion_tokens": 91
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-abbreviated-degree",
+      "index": 24,
+      "raw": {
+        "education": [
+          {
+            "degree": "BSc Computer Science",
+            "description": "",
+            "endDate": "2020",
+            "fieldOfStudy": "Computer Science",
+            "location": "",
+            "school": "Ridgewater University",
+            "startDate": "2016"
+          }
+        ],
+        "experience": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Ridgewater University",
+            "degree": "BSc Computer Science",
+            "fieldOfStudy": "Computer Science",
+            "location": "",
+            "startDate": "2016",
+            "endDate": "2020",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 3881.587403999991,
+      "attempts": 1,
+      "provider": "SiliconFlow",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00008082,
+        "prompt_tokens": 283,
+        "completion_tokens": 103
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-two-schools",
+      "index": 25,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Ashford University",
+            "degree": "Master of Science in Statistics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "2024",
+            "description": ""
+          },
+          {
+            "school": "Crestwood College",
+            "degree": "Diploma in Data Analytics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2019",
+            "endDate": "2021",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Ashford University",
+            "degree": "Master of Science in Statistics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "2024",
+            "description": ""
+          },
+          {
+            "school": "Crestwood College",
+            "degree": "Diploma in Data Analytics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2019",
+            "endDate": "2021",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2501.823021000004,
+      "attempts": 1,
+      "provider": "NextBit",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0000604125,
+        "prompt_tokens": 305,
+        "completion_tokens": 177
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-project",
+      "index": 26,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "PocketLedger",
+            "url": "https://example.invalid/pocketledger",
+            "description": "• Built an offline expense log."
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "PocketLedger",
+            "url": "https://example.invalid/pocketledger",
+            "description": "• Built an offline expense log."
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1169.5801809999975,
+      "attempts": 1,
+      "provider": "CoreWeave",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0000397,
+        "prompt_tokens": 284,
+        "completion_tokens": 75
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-project-labeled",
+      "index": 27,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "GardenGrid",
+            "url": "https://example.invalid/gardengrid",
+            "description": "• Visualized planting schedules."
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "GardenGrid",
+            "url": "https://example.invalid/gardengrid",
+            "description": "• Visualized planting schedules."
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 653.3730409999989,
+      "attempts": 1,
+      "provider": "Makora",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000036384,
+        "prompt_tokens": 288,
+        "completion_tokens": 74
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-project-missing-link",
+      "index": 28,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "EchoNotes",
+            "url": "Public URL not supplied.",
+            "description": "• Recorded local meeting notes."
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "EchoNotes",
+            "url": "Public URL not supplied.",
+            "description": "• Recorded local meeting notes."
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 851.0585259999934,
+      "attempts": 1,
+      "provider": "DeepInfra",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00003456,
+        "prompt_tokens": 280,
+        "completion_tokens": 44
+      }
+    },
+    {
+      "model": "google/gemma-4-26b-a4b-it",
+      "fixture": "v-unfamiliar-employer",
+      "index": 29,
+      "raw": {
+        "experience": [
+          {
+            "company": "Morrow & Kite",
+            "title": "Frontend Developer",
+            "location": "",
+            "startDate": "2024",
+            "endDate": "Present",
+            "description": "• Built accessible checkout forms."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Morrow & Kite",
+            "title": "Frontend Developer",
+            "location": "",
+            "startDate": "2024",
+            "endDate": "Present",
+            "description": "• Built accessible checkout forms."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1301.2338000000018,
+      "attempts": 1,
+      "provider": "DeepInfra",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.00004103,
+        "prompt_tokens": 285,
+        "completion_tokens": 62
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "company-first",
+      "index": 0,
+      "raw": {
+        "experience": [
+          {
+            "company": "Northstar Labs",
+            "title": "Software Developer",
+            "location": "",
+            "startDate": "Jan 2023",
+            "endDate": "Present",
+            "description": "• Built a scheduling dashboard."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Northstar Labs",
+            "title": "Software Developer",
+            "location": "",
+            "startDate": "Jan 2023",
+            "endDate": "Present",
+            "description": "• Built a scheduling dashboard."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 4511.166882999998,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001905,
+        "prompt_tokens": 1465,
+        "completion_tokens": 88
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "title-first",
+      "index": 1,
+      "raw": {
+        "experience": [
+          {
+            "company": "Maple Systems",
+            "title": "Backend Engineer",
+            "location": "",
+            "startDate": "Feb 2021",
+            "endDate": "Aug 2023",
+            "description": "• Maintained billing APIs."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Maple Systems",
+            "title": "Backend Engineer",
+            "location": "",
+            "startDate": "Feb 2021",
+            "endDate": "Aug 2023",
+            "description": "• Maintained billing APIs."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 4697.393345999997,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001926,
+        "prompt_tokens": 1471,
+        "completion_tokens": 91
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "same-line-dates",
+      "index": 2,
+      "raw": {
+        "experience": [
+          {
+            "company": "Cedar Analytics",
+            "title": "Data Analyst",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2022",
+            "description": "• Analyzed synthetic sales data."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Cedar Analytics",
+            "title": "Data Analyst",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2022",
+            "description": "• Analyzed synthetic sales data."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1104.2093900000036,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001901,
+        "prompt_tokens": 1466,
+        "completion_tokens": 87
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "client-mention",
+      "index": 3,
+      "raw": {
+        "experience": [
+          {
+            "company": "Harbor Consulting",
+            "title": "Integration Developer",
+            "location": "",
+            "startDate": "Mar 2022",
+            "endDate": "Nov 2024",
+            "description": "• Delivered a connector for client Redbrick Retail."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Harbor Consulting",
+            "title": "Integration Developer",
+            "location": "",
+            "startDate": "Mar 2022",
+            "endDate": "Nov 2024",
+            "description": "• Delivered a connector for client Redbrick Retail."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 920.8794070000004,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001977,
+        "prompt_tokens": 1477,
+        "completion_tokens": 100
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "missing-employer",
+      "index": 4,
+      "raw": {
+        "experience": [
+          {
+            "company": "",
+            "title": "Frontend Developer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "2023",
+            "description": "• Built accessible forms."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "",
+            "title": "Frontend Developer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "2023",
+            "description": "• Built accessible forms."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 4817.501852000001,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001839,
+        "prompt_tokens": 1464,
+        "completion_tokens": 75
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "missing-title",
+      "index": 5,
+      "raw": {
+        "experience": [
+          {
+            "company": "Willow Software",
+            "title": "",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2021",
+            "description": "• Updated internal tools."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Willow Software",
+            "title": "",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2021",
+            "description": "• Updated internal tools."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 4563.193231000012,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001831,
+        "prompt_tokens": 1466,
+        "completion_tokens": 73
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "school-first",
+      "index": 6,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Lakeside University",
+            "degree": "Bachelor of Science in Computer Science",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "Sep 2018",
+            "endDate": "May 2022",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Lakeside University",
+            "degree": "Bachelor of Science in Computer Science",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "Sep 2018",
+            "endDate": "May 2022",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1259.0998309999995,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001944,
+        "prompt_tokens": 1459,
+        "completion_tokens": 97
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "degree-first",
+      "index": 7,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Pinecrest University",
+            "degree": "Master of Science in Software Engineering",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "2024",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Pinecrest University",
+            "degree": "Master of Science in Software Engineering",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "2024",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1428.251414000013,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001903,
+        "prompt_tokens": 1453,
+        "completion_tokens": 90
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "undated-education",
+      "index": 8,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Birch College",
+            "degree": "Diploma in Computer Programming",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Birch College",
+            "degree": "Diploma in Computer Programming",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1035.694902999996,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001851,
+        "prompt_tokens": 1441,
+        "completion_tokens": 82
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "project-name",
+      "index": 9,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "StudyDock",
+            "url": "https://example.invalid/studydock",
+            "description": "Built a local study timer using JavaScript."
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "StudyDock",
+            "url": "https://example.invalid/studydock",
+            "description": "Built a local study timer using JavaScript."
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 900.3414960000082,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001802,
+        "prompt_tokens": 1457,
+        "completion_tokens": 69
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "project-no-url",
+      "index": 10,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "TrailMapper",
+            "url": "",
+            "description": "An independent hiking-map project. No public URL is supplied."
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "TrailMapper",
+            "url": "",
+            "description": "An independent hiking-map project. No public URL is supplied."
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1794.7844870000117,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001771,
+        "prompt_tokens": 1451,
+        "completion_tokens": 64
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "first-employer-boundary",
+      "index": 11,
+      "raw": {
+        "experience": [
+          {
+            "company": "Oak Studio",
+            "title": "Web Developer",
+            "location": "",
+            "startDate": "2019",
+            "endDate": "2021",
+            "description": "• Built dashboards."
+          },
+          {
+            "company": "River Labs",
+            "title": "Platform Engineer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "Present",
+            "description": "• Maintained services."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Oak Studio",
+            "title": "Web Developer",
+            "location": "",
+            "startDate": "2019",
+            "endDate": "2021",
+            "description": "• Built dashboards."
+          },
+          {
+            "company": "River Labs",
+            "title": "Platform Engineer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "Present",
+            "description": "• Maintained services."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1275.1517380000005,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0002134,
+        "prompt_tokens": 1484,
+        "completion_tokens": 130
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-employer-first",
+      "index": 12,
+      "raw": {
+        "experience": [
+          {
+            "company": "Silver Fern Digital",
+            "title": "Quality Assurance Analyst",
+            "location": "",
+            "startDate": "Apr 2022",
+            "endDate": "Jun 2024",
+            "description": "• Tested booking workflows."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Silver Fern Digital",
+            "title": "Quality Assurance Analyst",
+            "location": "",
+            "startDate": "Apr 2022",
+            "endDate": "Jun 2024",
+            "description": "• Tested booking workflows."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1160.8615480000008,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001959,
+        "prompt_tokens": 1474,
+        "completion_tokens": 97
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-role-first",
+      "index": 13,
+      "raw": {
+        "experience": [
+          {
+            "company": "Copper Finch",
+            "title": "Mobile Engineer",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2023",
+            "description": "• Built a transit app."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Copper Finch",
+            "title": "Mobile Engineer",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2023",
+            "description": "• Built a transit app."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1392.1258109999908,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001867,
+        "prompt_tokens": 1462,
+        "completion_tokens": 81
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-labeled",
+      "index": 14,
+      "raw": {
+        "experience": [
+          {
+            "company": "Granite Orchard",
+            "title": "Support Specialist",
+            "location": "",
+            "startDate": "2023",
+            "endDate": "Present",
+            "description": "• Resolved account issues."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Granite Orchard",
+            "title": "Support Specialist",
+            "location": "",
+            "startDate": "2023",
+            "endDate": "Present",
+            "description": "• Resolved account issues."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 905.2900349999982,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001869,
+        "prompt_tokens": 1464,
+        "completion_tokens": 81
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-client",
+      "index": 15,
+      "raw": {
+        "experience": [
+          {
+            "company": "Helix Workshop",
+            "title": "Automation Developer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "2024",
+            "description": "• Implemented systems for client Blue Harbor Bank."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Helix Workshop",
+            "title": "Automation Developer",
+            "location": "",
+            "startDate": "2021",
+            "endDate": "2024",
+            "description": "• Implemented systems for client Blue Harbor Bank."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1283.6982439999992,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000193,
+        "prompt_tokens": 1470,
+        "completion_tokens": 92
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-two-jobs",
+      "index": 16,
+      "raw": {
+        "experience": [
+          {
+            "company": "Cloudberry Works",
+            "title": "Test Engineer",
+            "location": "",
+            "startDate": "2018",
+            "endDate": "2020",
+            "description": "• Tested devices."
+          },
+          {
+            "company": "Glacier Computing",
+            "title": "Product Manager",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "Present",
+            "description": "• Managed a product team."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Cloudberry Works",
+            "title": "Test Engineer",
+            "location": "",
+            "startDate": "2018",
+            "endDate": "2020",
+            "description": "• Tested devices."
+          },
+          {
+            "company": "Glacier Computing",
+            "title": "Product Manager",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "Present",
+            "description": "• Managed a product team."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1147.682084999993,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0002158,
+        "prompt_tokens": 1488,
+        "completion_tokens": 134
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-three-columns",
+      "index": 17,
+      "raw": {
+        "experience": [
+          {
+            "company": "Aspen Signal",
+            "title": "Network Technician",
+            "location": "Kingston, ON",
+            "startDate": "2019",
+            "endDate": "2022",
+            "description": "• Installed network devices."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Aspen Signal",
+            "title": "Network Technician",
+            "location": "Kingston, ON",
+            "startDate": "2019",
+            "endDate": "2022",
+            "description": "• Installed network devices."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 919.910567999992,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001895,
+        "prompt_tokens": 1465,
+        "completion_tokens": 86
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-employer-absent",
+      "index": 18,
+      "raw": {
+        "experience": [
+          {
+            "company": "",
+            "title": "Operations Coordinator",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "Present",
+            "description": "• Scheduled field visits."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "",
+            "title": "Operations Coordinator",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "Present",
+            "description": "• Scheduled field visits."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 773.2749219999969,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001846,
+        "prompt_tokens": 1461,
+        "completion_tokens": 77
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-title-absent",
+      "index": 19,
+      "raw": {
+        "experience": [
+          {
+            "company": "Sequoia Devices",
+            "title": "",
+            "location": "",
+            "startDate": "2017",
+            "endDate": "2019",
+            "description": "• Maintained diagnostic equipment."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Sequoia Devices",
+            "title": "",
+            "location": "",
+            "startDate": "2017",
+            "endDate": "2019",
+            "description": "• Maintained diagnostic equipment."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1042.8764679999877,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001875,
+        "prompt_tokens": 1470,
+        "completion_tokens": 81
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-undated-job",
+      "index": 20,
+      "raw": {
+        "experience": [
+          {
+            "company": "Juniper Grove",
+            "title": "Interface Designer",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": "• Designed navigation prototypes."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Juniper Grove",
+            "title": "Interface Designer",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": "• Designed navigation prototypes."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1467.9824979999976,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001854,
+        "prompt_tokens": 1454,
+        "completion_tokens": 80
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-school-degree",
+      "index": 21,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Westhaven University",
+            "degree": "Bachelor of Arts in Economics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2015",
+            "endDate": "2019",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Westhaven University",
+            "degree": "Bachelor of Arts in Economics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2015",
+            "endDate": "2019",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 767.7095390000031,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001903,
+        "prompt_tokens": 1453,
+        "completion_tokens": 90
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-degree-school",
+      "index": 22,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Brookfield Polytechnic",
+            "degree": "Diploma in Information Technology",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2022",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Brookfield Polytechnic",
+            "degree": "Diploma in Information Technology",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2020",
+            "endDate": "2022",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 999.7312819999934,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001915,
+        "prompt_tokens": 1455,
+        "completion_tokens": 92
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-undated-school",
+      "index": 23,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Meadowvale College",
+            "degree": "Certificate in Web Design",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Meadowvale College",
+            "degree": "Certificate in Web Design",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "",
+            "endDate": "",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 924.0947109999979,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001857,
+        "prompt_tokens": 1442,
+        "completion_tokens": 83
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-abbreviated-degree",
+      "index": 24,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Ridgewater University",
+            "degree": "BSc Computer Science",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2016",
+            "endDate": "2020",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Ridgewater University",
+            "degree": "BSc Computer Science",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2016",
+            "endDate": "2020",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 854.3044459999946,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.000188,
+        "prompt_tokens": 1450,
+        "completion_tokens": 86
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-two-schools",
+      "index": 25,
+      "raw": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Ashford University",
+            "degree": "Master of Science in Statistics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "2024",
+            "description": ""
+          },
+          {
+            "school": "Crestwood College",
+            "degree": "Diploma in Data Analytics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2019",
+            "endDate": "2021",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [
+          {
+            "school": "Ashford University",
+            "degree": "Master of Science in Statistics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2022",
+            "endDate": "2024",
+            "description": ""
+          },
+          {
+            "school": "Crestwood College",
+            "degree": "Diploma in Data Analytics",
+            "fieldOfStudy": "",
+            "location": "",
+            "startDate": "2019",
+            "endDate": "2021",
+            "description": ""
+          }
+        ],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1239.111287000007,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0002221,
+        "prompt_tokens": 1476,
+        "completion_tokens": 149
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-project",
+      "index": 26,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "PocketLedger",
+            "url": "https://example.invalid/pocketledger",
+            "description": "• Built an offline expense log."
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "PocketLedger",
+            "url": "https://example.invalid/pocketledger",
+            "description": "• Built an offline expense log."
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 2790.736506000001,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001796,
+        "prompt_tokens": 1456,
+        "completion_tokens": 68
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-project-labeled",
+      "index": 27,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "GardenGrid",
+            "url": "https://example.invalid/gardengrid",
+            "description": "• Visualized planting schedules."
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "GardenGrid",
+            "url": "https://example.invalid/gardengrid",
+            "description": "• Visualized planting schedules."
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 4471.214802000002,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001808,
+        "prompt_tokens": 1463,
+        "completion_tokens": 69
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-project-missing-link",
+      "index": 28,
+      "raw": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "EchoNotes",
+            "url": "",
+            "description": "• Recorded local meeting notes.\nPublic URL not supplied."
+          }
+        ],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [],
+        "education": [],
+        "projects": [
+          {
+            "name": "EchoNotes",
+            "url": "",
+            "description": "• Recorded local meeting notes.\nPublic URL not supplied."
+          }
+        ],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 1052.404297999994,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001799,
+        "prompt_tokens": 1454,
+        "completion_tokens": 69
+      }
+    },
+    {
+      "model": "anthropic/claude-haiku-5.5",
+      "fixture": "v-unfamiliar-employer",
+      "index": 29,
+      "raw": {
+        "experience": [
+          {
+            "company": "Morrow & Kite",
+            "title": "Frontend Developer",
+            "location": "",
+            "startDate": "2024",
+            "endDate": "Present",
+            "description": "• Built accessible checkout forms."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "resume": {
+        "experience": [
+          {
+            "company": "Morrow & Kite",
+            "title": "Frontend Developer",
+            "location": "",
+            "startDate": "2024",
+            "endDate": "Present",
+            "description": "• Built accessible checkout forms."
+          }
+        ],
+        "education": [],
+        "projects": [],
+        "skills": ""
+      },
+      "rejected": [],
+      "ms": 4370.053610000003,
+      "attempts": 1,
+      "provider": "Google",
+      "finishReason": "stop",
+      "usage": {
+        "cost": 0.0001893,
+        "prompt_tokens": 1463,
+        "completion_tokens": 86
+      }
+    }
+  ]
+}

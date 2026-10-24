@@ -20,3 +20,10 @@ workspace.json
 history/
 originals/
 folio-data/
+# Generated LLM comparison reports.
+experiments/results/
+# Editor swap files can contain copies of .env.
+*.kate-swp
+*.swp
+# Downloaded third-party benchmarks; never commit.
+benchmarks/

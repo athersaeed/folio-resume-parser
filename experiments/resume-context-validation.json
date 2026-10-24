@@ -1,0 +1,290 @@
+[
+  {
+    "id": "v-employer-first",
+    "text": "EXPERIENCE\nSilver Fern Digital | Quality Assurance Analyst\nApr 2022 \u2013 Jun 2024\n\u2022 Tested booking workflows.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Silver Fern Digital"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Quality Assurance Analyst"
+      }
+    ]
+  },
+  {
+    "id": "v-role-first",
+    "text": "WORK EXPERIENCE\nMobile Engineer\nCopper Finch\n2020 \u2013 2023\n\u2022 Built a transit app.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Copper Finch"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Mobile Engineer"
+      }
+    ]
+  },
+  {
+    "id": "v-labeled",
+    "text": "EXPERIENCE\nCompany: Granite Orchard\nPosition: Support Specialist\n2023 \u2013 Present\n\u2022 Resolved account issues.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Granite Orchard"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Support Specialist"
+      }
+    ]
+  },
+  {
+    "id": "v-client",
+    "text": "EXPERIENCE\nHelix Workshop | Automation Developer\n2021 \u2013 2024\n\u2022 Implemented systems for client Blue Harbor Bank.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Helix Workshop"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Automation Developer"
+      }
+    ]
+  },
+  {
+    "id": "v-two-jobs",
+    "text": "EXPERIENCE\nTest Engineer\nCloudberry Works\n2018 \u2013 2020\n\u2022 Tested devices.\nGlacier Computing | Product Manager\n2020 \u2013 Present\n\u2022 Managed a product team.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Cloudberry Works"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Test Engineer"
+      }
+    ]
+  },
+  {
+    "id": "v-three-columns",
+    "text": "EXPERIENCE\nAspen Signal   Network Technician   Kingston, ON\n2019 \u2013 2022\n\u2022 Installed network devices.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Aspen Signal"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Network Technician"
+      }
+    ]
+  },
+  {
+    "id": "v-employer-absent",
+    "text": "EXPERIENCE\nOperations Coordinator\n2022 \u2013 Present\n\u2022 Scheduled field visits.\nEmployer not provided.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": ""
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Operations Coordinator"
+      }
+    ]
+  },
+  {
+    "id": "v-title-absent",
+    "text": "EXPERIENCE\nEmployer: Sequoia Devices\n2017 \u2013 2019\n\u2022 Maintained diagnostic equipment.\nJob title omitted.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Sequoia Devices"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": ""
+      }
+    ]
+  },
+  {
+    "id": "v-undated-job",
+    "text": "EXPERIENCE\nInterface Designer\nJuniper Grove\n\u2022 Designed navigation prototypes.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Juniper Grove"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Interface Designer"
+      }
+    ]
+  },
+  {
+    "id": "v-school-degree",
+    "text": "EDUCATION\nWesthaven University\nBachelor of Arts in Economics\n2015 \u2013 2019",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "expected": "Westhaven University"
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "expected": "Bachelor of Arts in Economics"
+      }
+    ]
+  },
+  {
+    "id": "v-degree-school",
+    "text": "EDUCATION\nDiploma in Information Technology\nBrookfield Polytechnic\n2020 \u2013 2022",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "expected": "Brookfield Polytechnic"
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "expected": "Diploma in Information Technology"
+      }
+    ]
+  },
+  {
+    "id": "v-undated-school",
+    "text": "EDUCATION\nMeadowvale College\nCertificate in Web Design",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "expected": "Meadowvale College"
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "expected": "Certificate in Web Design"
+      }
+    ]
+  },
+  {
+    "id": "v-abbreviated-degree",
+    "text": "EDUCATION\nRidgewater University | BSc Computer Science | 2016 \u2013 2020",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "expected": "Ridgewater University"
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "expected": "BSc Computer Science"
+      }
+    ]
+  },
+  {
+    "id": "v-two-schools",
+    "text": "EDUCATION\nAshford University\nMaster of Science in Statistics\n2022 \u2013 2024\nCrestwood College\nDiploma in Data Analytics\n2019 \u2013 2021",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "expected": "Ashford University"
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "expected": "Master of Science in Statistics"
+      }
+    ]
+  },
+  {
+    "id": "v-project",
+    "text": "PROJECTS\nPocketLedger\nhttps://example.invalid/pocketledger\n\u2022 Built an offline expense log.",
+    "questions": [
+      {
+        "id": "name",
+        "field": "projects.name",
+        "expected": "PocketLedger"
+      },
+      {
+        "id": "url",
+        "field": "projects.url",
+        "expected": "https://example.invalid/pocketledger"
+      }
+    ]
+  },
+  {
+    "id": "v-project-labeled",
+    "text": "PROJECTS\nProject: GardenGrid\nURL: https://example.invalid/gardengrid\n\u2022 Visualized planting schedules.",
+    "questions": [
+      {
+        "id": "name",
+        "field": "projects.name",
+        "expected": "GardenGrid"
+      },
+      {
+        "id": "url",
+        "field": "projects.url",
+        "expected": "https://example.invalid/gardengrid"
+      }
+    ]
+  },
+  {
+    "id": "v-project-missing-link",
+    "text": "PROJECTS\nEchoNotes\n\u2022 Recorded local meeting notes.\nPublic URL not supplied.",
+    "questions": [
+      {
+        "id": "name",
+        "field": "projects.name",
+        "expected": "EchoNotes"
+      },
+      {
+        "id": "url",
+        "field": "projects.url",
+        "expected": ""
+      }
+    ]
+  },
+  {
+    "id": "v-unfamiliar-employer",
+    "text": "EXPERIENCE\nFrontend Developer | Morrow & Kite\n2024 \u2013 Present\n\u2022 Built accessible checkout forms.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Morrow & Kite"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Frontend Developer"
+      }
+    ]
+  }
+]

@@ -1,0 +1,340 @@
+[
+  {
+    "id": "company-first",
+    "text": "EXPERIENCE\nNorthstar Labs | Software Developer\nJan 2023 \u2013 Present\n\u2022 Built a scheduling dashboard.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "question": "Select the exact source value for the employer of the first employment entry. Select unknown if it is not stated.",
+        "expected": "Northstar Labs",
+        "criteria": {
+          "candidate_0": "Northstar Labs",
+          "candidate_1": "Software Developer",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "question": "Select the exact source value for the job title of the first employment entry. Select unknown if it is not stated.",
+        "expected": "Software Developer",
+        "criteria": {
+          "candidate_0": "Northstar Labs",
+          "candidate_1": "Software Developer",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      }
+    ]
+  },
+  {
+    "id": "title-first",
+    "text": "WORK EXPERIENCE\nBackend Engineer\nMaple Systems\nFeb 2021 \u2013 Aug 2023\n\u2022 Maintained billing APIs.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "question": "Select the exact source value for the employer of the first employment entry. Select unknown if it is not stated.",
+        "expected": "Maple Systems",
+        "criteria": {
+          "candidate_0": "Backend Engineer",
+          "candidate_1": "Maple Systems",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "question": "Select the exact source value for the job title of the first employment entry. Select unknown if it is not stated.",
+        "expected": "Backend Engineer",
+        "criteria": {
+          "candidate_0": "Backend Engineer",
+          "candidate_1": "Maple Systems",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      }
+    ]
+  },
+  {
+    "id": "same-line-dates",
+    "text": "EXPERIENCE\nCedar Analytics | Data Analyst | 2020 \u2013 2022\n\u2022 Analyzed synthetic sales data.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "question": "Select the exact source value for the employer of the first employment entry. Select unknown if it is not stated.",
+        "expected": "Cedar Analytics",
+        "criteria": {
+          "candidate_0": "Cedar Analytics",
+          "candidate_1": "Data Analyst",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "question": "Select the exact source value for the job title of the first employment entry. Select unknown if it is not stated.",
+        "expected": "Data Analyst",
+        "criteria": {
+          "candidate_0": "Cedar Analytics",
+          "candidate_1": "Data Analyst",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      }
+    ]
+  },
+  {
+    "id": "client-mention",
+    "text": "EXPERIENCE\nHarbor Consulting | Integration Developer\nMar 2022 \u2013 Nov 2024\n\u2022 Delivered a connector for client Redbrick Retail.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "question": "Select the exact source value for the employer of the first employment entry. Select unknown if it is not stated.",
+        "expected": "Harbor Consulting",
+        "criteria": {
+          "candidate_0": "Harbor Consulting",
+          "candidate_1": "Integration Developer",
+          "candidate_2": "Redbrick Retail",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "question": "Select the exact source value for the job title of the first employment entry. Select unknown if it is not stated.",
+        "expected": "Integration Developer",
+        "criteria": {
+          "candidate_0": "Harbor Consulting",
+          "candidate_1": "Integration Developer",
+          "candidate_2": "Redbrick Retail",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      }
+    ]
+  },
+  {
+    "id": "missing-employer",
+    "text": "EXPERIENCE\nFrontend Developer\n2021 \u2013 2023\n\u2022 Built accessible forms.\nEmployer is not stated in this source.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "question": "Select the exact source value for the employer of the first employment entry. Select unknown if it is not stated.",
+        "expected": "",
+        "criteria": {
+          "candidate_0": "Frontend Developer",
+          "candidate_1": "2021 \u2013 2023",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "question": "Select the exact source value for the job title of the first employment entry. Select unknown if it is not stated.",
+        "expected": "Frontend Developer",
+        "criteria": {
+          "candidate_0": "Frontend Developer",
+          "candidate_1": "2021 \u2013 2023",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      }
+    ]
+  },
+  {
+    "id": "missing-title",
+    "text": "EXPERIENCE\nEmployer: Willow Software\n2020 \u2013 2021\n\u2022 Updated internal tools.\nJob title is not stated in this source.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "question": "Select the exact source value for the employer of the first employment entry. Select unknown if it is not stated.",
+        "expected": "Willow Software",
+        "criteria": {
+          "candidate_0": "Willow Software",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "question": "Select the exact source value for the job title of the first employment entry. Select unknown if it is not stated.",
+        "expected": "",
+        "criteria": {
+          "candidate_0": "Willow Software",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      }
+    ]
+  },
+  {
+    "id": "school-first",
+    "text": "EDUCATION\nLakeside University\nBachelor of Science in Computer Science\nSep 2018 \u2013 May 2022",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "question": "Select the exact source value for the educational institution of the first education entry. Select unknown if it is not stated.",
+        "expected": "Lakeside University",
+        "criteria": {
+          "candidate_0": "Lakeside University",
+          "candidate_1": "Bachelor of Science in Computer Science",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "question": "Select the exact source value for the full degree or qualification of the first education entry. Select unknown if it is not stated.",
+        "expected": "Bachelor of Science in Computer Science",
+        "criteria": {
+          "candidate_0": "Lakeside University",
+          "candidate_1": "Bachelor of Science in Computer Science",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      }
+    ]
+  },
+  {
+    "id": "degree-first",
+    "text": "EDUCATION\nMaster of Science in Software Engineering\nPinecrest University\n2022 \u2013 2024",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "question": "Select the exact source value for the educational institution of the first education entry. Select unknown if it is not stated.",
+        "expected": "Pinecrest University",
+        "criteria": {
+          "candidate_0": "Master of Science in Software Engineering",
+          "candidate_1": "Pinecrest University",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "question": "Select the exact source value for the full degree or qualification of the first education entry. Select unknown if it is not stated.",
+        "expected": "Master of Science in Software Engineering",
+        "criteria": {
+          "candidate_0": "Master of Science in Software Engineering",
+          "candidate_1": "Pinecrest University",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      }
+    ]
+  },
+  {
+    "id": "undated-education",
+    "text": "EDUCATION\nBirch College\nDiploma in Computer Programming",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "question": "Select the exact source value for the educational institution of the first education entry. Select unknown if it is not stated.",
+        "expected": "Birch College",
+        "criteria": {
+          "candidate_0": "Birch College",
+          "candidate_1": "Diploma in Computer Programming",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "question": "Select the exact source value for the full degree or qualification of the first education entry. Select unknown if it is not stated.",
+        "expected": "Diploma in Computer Programming",
+        "criteria": {
+          "candidate_0": "Birch College",
+          "candidate_1": "Diploma in Computer Programming",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      }
+    ]
+  },
+  {
+    "id": "project-name",
+    "text": "PROJECTS\nStudyDock\nhttps://example.invalid/studydock\nBuilt a local study timer using JavaScript.",
+    "questions": [
+      {
+        "id": "name",
+        "field": "projects.name",
+        "question": "Select the exact source value for the project name of the first project entry. Select unknown if it is not stated.",
+        "expected": "StudyDock",
+        "criteria": {
+          "candidate_0": "StudyDock",
+          "candidate_1": "https://example.invalid/studydock",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      },
+      {
+        "id": "url",
+        "field": "projects.url",
+        "question": "Select the exact source value for the project URL of the first project entry. Select unknown if it is not stated.",
+        "expected": "https://example.invalid/studydock",
+        "criteria": {
+          "candidate_0": "StudyDock",
+          "candidate_1": "https://example.invalid/studydock",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      }
+    ]
+  },
+  {
+    "id": "project-no-url",
+    "text": "PROJECTS\nTrailMapper\nAn independent hiking-map project. No public URL is supplied.",
+    "questions": [
+      {
+        "id": "name",
+        "field": "projects.name",
+        "question": "Select the exact source value for the project name of the first project entry. Select unknown if it is not stated.",
+        "expected": "TrailMapper",
+        "criteria": {
+          "candidate_0": "TrailMapper",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      },
+      {
+        "id": "url",
+        "field": "projects.url",
+        "question": "Select the exact source value for the project URL of the first project entry. Select unknown if it is not stated.",
+        "expected": "",
+        "criteria": {
+          "candidate_0": "TrailMapper",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      }
+    ]
+  },
+  {
+    "id": "first-employer-boundary",
+    "text": "EXPERIENCE\nOak Studio | Web Developer\n2019 \u2013 2021\n\u2022 Built dashboards.\nRiver Labs | Platform Engineer\n2021 \u2013 Present\n\u2022 Maintained services.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "question": "Select the exact source value for the employer of the first employment entry. Select unknown if it is not stated.",
+        "expected": "Oak Studio",
+        "criteria": {
+          "candidate_0": "Oak Studio",
+          "candidate_1": "Web Developer",
+          "candidate_2": "River Labs",
+          "candidate_3": "Platform Engineer",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "question": "Select the exact source value for the job title of the first employment entry. Select unknown if it is not stated.",
+        "expected": "Web Developer",
+        "criteria": {
+          "candidate_0": "Oak Studio",
+          "candidate_1": "Web Developer",
+          "candidate_2": "River Labs",
+          "candidate_3": "Platform Engineer",
+          "unknown": "Not stated in the source; no supported value is available."
+        }
+      }
+    ]
+  }
+]

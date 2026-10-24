@@ -1,0 +1,354 @@
+[
+  {
+    "id": "h-comma-title-company",
+    "text": "EXPERIENCE\nSenior Data Engineer, Halcyon Freight\n03/2021 – 08/2024\n• Built ingestion pipelines for shipment events.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Halcyon Freight"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Senior Data Engineer"
+      }
+    ]
+  },
+  {
+    "id": "h-at-phrase",
+    "text": "Professional Experience\nProduct Designer at Lumen & Tide\nJanuary 2022 - Present\n- Led the onboarding redesign.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Lumen & Tide"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Product Designer"
+      }
+    ]
+  },
+  {
+    "id": "h-em-dash-location",
+    "text": "EXPERIENCE\nBramble Health — Clinical Data Coordinator — Toronto, ON\n2019 – 2022\n• Maintained clinical trial records.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Bramble Health"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Clinical Data Coordinator"
+      }
+    ]
+  },
+  {
+    "id": "h-pdf-columns",
+    "text": "EXPERIENCE\nNimbus Rail\t\t\tSep 2020 – May 2023\nSite Reliability Engineer\t\t\tVancouver, BC\n• Reduced paging volume by consolidating alerts.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Nimbus Rail"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Site Reliability Engineer"
+      }
+    ]
+  },
+  {
+    "id": "h-title-without-keyword",
+    "text": "EXPERIENCE\nThistle Labs | Founding Member of Technical Staff\n2022 – 2024\n• Shipped the first billing system.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Thistle Labs"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Founding Member of Technical Staff"
+      }
+    ]
+  },
+  {
+    "id": "h-company-contains-title-word",
+    "text": "EXPERIENCE\nEngineering Manager\nDeveloper Tools Collective\n2021 – Present\n• Managed a team of six engineers.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Developer Tools Collective"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Engineering Manager"
+      }
+    ]
+  },
+  {
+    "id": "h-university-employer",
+    "text": "EXPERIENCE\nUniversity of Calder | Research Assistant\nSep 2019 – Apr 2021\n• Cleaned survey datasets.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "University of Calder"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Research Assistant"
+      }
+    ]
+  },
+  {
+    "id": "h-dates-first",
+    "text": "EXPERIENCE\n2018 – 2021\nSupport Technician\nKestrel Networks\n• Resolved hardware tickets.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Kestrel Networks"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Support Technician"
+      }
+    ]
+  },
+  {
+    "id": "h-inline-mmyyyy-two-jobs",
+    "text": "WORK HISTORY\nOrchid Payments | Backend Developer | 06/2022 – Present\n• Owned the refunds service.\nTamarack Media | Junior Developer | 01/2020 – 05/2022\n• Built CMS plugins.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Orchid Payments"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Backend Developer"
+      }
+    ]
+  },
+  {
+    "id": "h-promotions-under-company",
+    "text": "EXPERIENCE\nQuarry Analytics\nLead Analyst    2022 – Present\nAnalyst    2019 – 2022\n• Built demand forecasting models.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Quarry Analytics"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Lead Analyst"
+      }
+    ]
+  },
+  {
+    "id": "h-all-caps-company",
+    "text": "EXPERIENCE\nMARIGOLD ROBOTICS\nControls Engineer\nMay 2018 – Jul 2021\n• Tuned servo control loops.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "MARIGOLD ROBOTICS"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Controls Engineer"
+      }
+    ]
+  },
+  {
+    "id": "h-season-date",
+    "text": "EXPERIENCE\nSoftware Engineering Intern — Wavecrest Games\nSummer 2023\n• Prototyped a matchmaking service.",
+    "questions": [
+      {
+        "id": "company",
+        "field": "experience.company",
+        "expected": "Wavecrest Games"
+      },
+      {
+        "id": "title",
+        "field": "experience.title",
+        "expected": "Software Engineering Intern"
+      }
+    ]
+  },
+  {
+    "id": "e-one-line-comma",
+    "text": "EDUCATION\nB.Eng. in Mechanical Engineering, Fairmont Institute of Technology, 2016 – 2020",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "expected": "Fairmont Institute of Technology"
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "expected": "B.Eng. in Mechanical Engineering"
+      }
+    ]
+  },
+  {
+    "id": "e-associate",
+    "text": "EDUCATION\nHollis Community College\nAssociate of Applied Science in Network Administration\n2014 – 2016",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "expected": "Hollis Community College"
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "expected": "Associate of Applied Science in Network Administration"
+      }
+    ]
+  },
+  {
+    "id": "e-non-english",
+    "text": "EDUCATION\nÉcole Normale de Saint-Rémy | Licence en Informatique | 2015 – 2018",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "expected": "École Normale de Saint-Rémy"
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "expected": "Licence en Informatique"
+      }
+    ]
+  },
+  {
+    "id": "e-in-progress",
+    "text": "EDUCATION\nMEng Electrical Engineering (expected 2026)\nDunmore University\n• Thesis on battery degradation models.",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "expected": "Dunmore University"
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "expected": "MEng Electrical Engineering"
+      }
+    ]
+  },
+  {
+    "id": "e-bootcamp",
+    "text": "EDUCATION\nFull-Stack Web Development Certificate\nLaunchpoint Academy\nMar 2021 – Sep 2021",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "expected": "Launchpoint Academy"
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "expected": "Full-Stack Web Development Certificate"
+      }
+    ]
+  },
+  {
+    "id": "e-school-missing",
+    "text": "EDUCATION\nBachelor of Commerce\n2012 – 2016\n• Minor in statistics.",
+    "questions": [
+      {
+        "id": "school",
+        "field": "education.school",
+        "expected": ""
+      },
+      {
+        "id": "degree",
+        "field": "education.degree",
+        "expected": "Bachelor of Commerce"
+      }
+    ]
+  },
+  {
+    "id": "p-name-dash-description",
+    "text": "PROJECTS\nTidepool — a tide-chart web app for surfers\nhttps://example.invalid/tidepool\n• Cached forecasts for offline use.",
+    "questions": [
+      {
+        "id": "name",
+        "field": "projects.name",
+        "expected": "Tidepool"
+      },
+      {
+        "id": "url",
+        "field": "projects.url",
+        "expected": "https://example.invalid/tidepool"
+      }
+    ]
+  },
+  {
+    "id": "p-schemeless-repo-link",
+    "text": "PERSONAL PROJECTS\nLedgerLite | React, IndexedDB | github.com/example-user/ledgerlite\n- Local-first budget tracker.",
+    "questions": [
+      {
+        "id": "name",
+        "field": "projects.name",
+        "expected": "LedgerLite"
+      },
+      {
+        "id": "url",
+        "field": "projects.url",
+        "expected": "github.com/example-user/ledgerlite"
+      }
+    ]
+  },
+  {
+    "id": "p-capstone-prefix",
+    "text": "PROJECTS\nCapstone: Harborview Transit Tracker (2023)\n• Real-time bus arrival board.\nDemo: https://example.invalid/harborview",
+    "questions": [
+      {
+        "id": "name",
+        "field": "projects.name",
+        "expected": "Harborview Transit Tracker"
+      },
+      {
+        "id": "url",
+        "field": "projects.url",
+        "expected": "https://example.invalid/harborview"
+      }
+    ]
+  },
+  {
+    "id": "p-two-projects",
+    "text": "PROJECTS\nMoss — plant watering reminders\nhttps://example.invalid/moss\nFernbook — shared recipe notebook\nhttps://example.invalid/fernbook",
+    "questions": [
+      {
+        "id": "name",
+        "field": "projects.name",
+        "expected": "Moss"
+      },
+      {
+        "id": "url",
+        "field": "projects.url",
+        "expected": "https://example.invalid/moss"
+      }
+    ]
+  }
+]

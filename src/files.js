@@ -1,6 +1,7 @@
 import * as pdfjs from "pdfjs-dist";
 import workerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 import { unzipSync, strFromU8 } from "fflate";
+import { pageText } from "./pdf-text.js";
 pdfjs.GlobalWorkerOptions.workerSrc = workerUrl;
 export const MAX_FILE_BYTES = 15 * 1024 * 1024;
 export async function extractFile(file) {
@@ -63,35 +64,7 @@ export async function extractFile(file) {
     for (let n = 1; n <= pdf.numPages; n++) {
       const page = await pdf.getPage(n);
       const content = await page.getTextContent();
-      // Group glyphs by baseline and sort horizontally to recover natural lines.
-      const rows = [];
-      for (const item of content.items) {
-        if (!("str" in item) || !item.str.trim()) continue;
-        const y = item.transform[5];
-        let row = rows.find((r) => Math.abs(r.y - y) < 2.5);
-        if (!row) {
-          row = { y, items: [] };
-          rows.push(row);
-        }
-        row.items.push(item);
-      }
-      rows.sort((a, b) => b.y - a.y);
-      pages.push(
-        rows
-          .map((row) =>
-            row.items
-              .sort((a, b) => a.transform[4] - b.transform[4])
-              .map((item, i, items) => {
-                if (!i) return item.str;
-                const previous = items[i - 1];
-                const gap =
-                  item.transform[4] - previous.transform[4] - previous.width;
-                return (gap > 16 ? "   " : " ") + item.str;
-              })
-              .join(""),
-          )
-          .join("\n"),
-      );
+      pages.push(pageText(content.items));
     }
     const text = pages.join("\n\n");
     if (text.replace(/\s/g, "").length < 30)

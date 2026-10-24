@@ -1,0 +1,10 @@
+[
+  { "id": "openai/gpt-oss-20b", "reasoning": { "effort": "low" }, "note": "Reasoning is mandatory; lowest supported effort." },
+  { "id": "inference-net/schematron-v2-small" },
+  { "id": "google/gemma-4-26b-a4b-it", "reasoning": { "enabled": false } },
+  { "id": "deepseek/deepseek-v4-flash", "reasoning": { "effort": "none" } },
+  { "id": "mistralai/ministral-8b-2512" },
+  { "id": "qwen/qwen3.5-9b", "reasoning": { "enabled": false } },
+  { "id": "anthropic/claude-haiku-5.5", "reasoning": { "effort": "none" }, "temperature": null, "note": "Its providers reject temperature." },
+  { "id": "google/gemini-3.1-flash-lite", "reasoning": { "effort": "none" } }
+]
