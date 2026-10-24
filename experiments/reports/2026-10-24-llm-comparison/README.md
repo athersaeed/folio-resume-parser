@@ -85,8 +85,7 @@ Two smaller fixes came from the practice runs: Haiku's providers reject
   answer-specific, but this benchmark is now development data, not a held-out test.
 - The practice runs used the redaction and grounding code from before those fixes.
 - `experiments/resume-heldout.json` has still not been scored.
-- After the redaction fix, unusual layouts can still send a name and street address
-  (for example, the German CV). This must be improved before real resumes are used.
+- Redaction is best-effort; see the addendum below.
 - Requests used `data_collection: deny` and zero-data-retention routing.
 
 ## Reproduce
@@ -98,3 +97,33 @@ npm run bench:resume -- --models openai/gpt-oss-20b,google/gemma-4-26b-a4b-it,an
 
 The benchmark needs the dataset's `test.jsonl` and `pdfs/` in
 `benchmarks/resume-extract-bench/` (git-ignored). Model outputs vary between runs.
+
+## Addendum: stronger redaction (same day)
+
+The fix above stopped content loss but let names, addresses, and personal data
+through on unusual layouts: the German CV sent its candidate's name, street
+address, birth date, and family members' names. Redaction moved to
+`server/redact.js` and now masks, in order: exact profile values Folio already
+holds (name, email, phone, links, however punctuated); a short contact header;
+labeled personal-data lines in English, German, French, and Spanish, including
+mid-line labels, aliases, birth names, and national/tax IDs; then email, phone,
+LinkedIn, street, and header postal-code patterns. Name variants cover
+"Last, First", citation initials ("M.C. Last"), and hyphenated surnames, never
+single words (a candidate named Ruby keeps the Ruby skill). Location is not masked,
+so job locations survive. `npm run -s redact:preview -- <resume.pdf>` prints
+exactly what would be sent, without sending anything.
+
+Rerun on the same 10 PDFs ([summary](benchmark-after-redaction/summary.md) ·
+[all answers](benchmark-after-redaction/report.json)): no model output contained
+any candidate's name.
+
+| Approach                   | Fully passed | Key fields correct | Extra entries | Cost USD |
+| -------------------------- | ------------ | ------------------ | ------------- | -------- |
+| openai/gpt-oss-20b         | 7/10         | 132/152            | 2             | 0.0019   |
+| google/gemma-4-26b-a4b-it  | 8/10         | 152/152            | 2             | 0.0075   |
+| anthropic/claude-haiku-5.5 | 5/10         | 152/152            | 12            | 0.0160   |
+
+Gemma's new miss filed a publication as a project on the German CV, where the
+author name is now `[NAME]`; this may be a redaction side effect or run variance.
+Key-field accuracy was unchanged. Redaction remains best-effort: text that no rule
+recognizes is still sent, which is why the app must show the preview before sending.

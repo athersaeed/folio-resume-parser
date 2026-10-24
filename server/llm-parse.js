@@ -2,7 +2,10 @@
 // never reaches the browser. Output is a proposal; every value must be an exact
 // substring of the text the model saw, or it is dropped and reported.
 import { createHash } from "node:crypto";
-import { ENTRY_FIELDS, sectionHeading } from "../src/parser.js";
+import { ENTRY_FIELDS } from "../src/parser.js";
+import { redactContact } from "./redact.js";
+
+export { redactContact };
 
 export const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
 
@@ -69,41 +72,6 @@ export const RESUME_SCHEMA = {
 export const PROMPT_SHA256 = createHash("sha256")
   .update(SYSTEM_PROMPT + JSON.stringify(RESUME_SCHEMA))
   .digest("hex");
-
-const EMAIL = /[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/g;
-const PHONE =
-  /\+\d{1,3}(?:[ .()-]*\d){6,14}|(?:\(\d{3}\)|\d{3})[ .-]\d{3}[ .-]\d{4}\b/g;
-const LINKEDIN = /(?:https?:\/\/)?(?:www\.)?linkedin\.com\/[^\s|<>]+/gi;
-// A contact header is short. A first recognized heading further down means the
-// resume uses headings the parser does not know (e.g. German), not a long header.
-const HEADER_LINES = 12;
-
-// Best-effort removal of contact details, which rules parse locally anyway.
-// A short block before the first section heading (name, address, links) is
-// removed; otherwise only the likely name line and contact patterns are.
-export function redactContact(text) {
-  const lines = text.split(/\r?\n/);
-  const first = lines.findIndex((line) => sectionHeading(line));
-  const before = first > 0 ? lines.slice(0, first).filter((l) => l.trim()) : [];
-  const removedHeader = before.length > 0 && before.length <= HEADER_LINES;
-  let kept = lines;
-  if (removedHeader)
-    kept = ["[CONTACT DETAILS REMOVED]", ...lines.slice(first)];
-  else {
-    const nameAt = lines.findIndex((l) => l.trim());
-    const name = lines[nameAt]?.trim() || "";
-    if (name && name.length < 60 && !/[\d@]|https?:/.test(name))
-      kept = lines.map((l, i) => (i === nameAt ? "[NAME]" : l));
-  }
-  return {
-    text: kept
-      .join("\n")
-      .replace(EMAIL, "[EMAIL]")
-      .replace(LINKEDIN, "[LINKEDIN]")
-      .replace(PHONE, "[PHONE]"),
-    removedHeader,
-  };
-}
 
 // reasoning: per-model setting, e.g. {effort: "none"} or {effort: "low"} for
 // models where reasoning is mandatory. Omitted for non-reasoning models.
@@ -242,14 +210,23 @@ export async function callOpenRouter(
   throw lastError;
 }
 
-// Full pipeline for one resume text: redact, call, parse, ground.
 // Full pipeline for one resume text: redact, call, parse, ground. An empty or
 // malformed reply is retried once; usage and cost cover every attempt.
 export async function llmParse(
   text,
-  { model, reasoning, privacy, temperature, apiKey, fetchImpl, attempts = 2 },
+  {
+    model,
+    reasoning,
+    privacy,
+    temperature,
+    apiKey,
+    fetchImpl,
+    attempts = 2,
+    known = {},
+  },
 ) {
-  const redacted = redactContact(text);
+  // known: contact values Folio already holds (profile), masked everywhere.
+  const redacted = redactContact(text, known);
   const body = buildRequest({
     model,
     text: redacted.text,
@@ -284,6 +261,7 @@ export async function llmParse(
       raw,
       resume,
       rejected,
+      redactions: redacted.counts,
       ms,
       attempts: attempt,
       provider: payload.provider || "",
