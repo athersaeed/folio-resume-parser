@@ -2,7 +2,8 @@
 
 A local resume workspace: upload multiple resumes, review/edit their fields,
 click to copy into applications, and track which resume you used for each job.
-All saved data lives in a folder you choose on your computer.
+All saved data lives in a folder you choose on your computer. Optional AI parsing
+through OpenRouter is off by default and never sends anything without your approval.
 
 ## Run
 
@@ -69,6 +70,56 @@ workspace revisions remain in the data folder; application snapshots also remain
 Deleting private data permanently requires deleting the relevant folder/backups
 outside Folio. There is no automatic history pruning in this version.
 
+## Optional AI parsing
+
+The built-in parser uses rules. For much better results on real resumes (title
+before company, "Title at Company", multi-column PDFs, non-English CVs), Folio can
+send resume text to an LLM through [OpenRouter](https://openrouter.ai). This is
+opt-in, off by default, and requires your own API key.
+
+**Setup**
+
+1. Create an OpenRouter key, ideally with a small credit limit. In OpenRouter's
+   privacy settings, disable training on your data.
+2. `cp .env.example .env` and paste the key after `OPENROUTER_API_KEY=`.
+   `.env` is git-ignored and read only by the local server; the key is never sent
+   to the browser.
+3. Restart `npm run dev` (or `npm start`).
+
+**Use**
+
+In **Upload resume**, tick **Parse with AI** and choose what to send:
+
+| Mode                                | What is sent                                                                                                                                 | Contact fields come from |
+| ----------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ |
+| **Mask personal details** (default) | Resume text with your name, email, phone, links, address, and labeled personal data (birth date, family, IDs, etc.) replaced by placeholders | The local parser         |
+| **Send full resume**                | The complete text, unchanged                                                                                                                 | The AI, source-checked   |
+
+Before anything leaves your computer, Folio shows the exact text that will be sent.
+Choose **Send & review** or **Use rules parser only**; closing the dialog sends
+nothing. Your choices are remembered in this browser.
+
+**How results are handled**
+
+- One request per resume to the default model, `google/gemma-4-26b-a4b-it`
+  (about $0.001 per resume). Set `OPENROUTER_MODEL` in `.env` to use another.
+- Requests are routed only to providers that do not collect data and offer zero
+  data retention.
+- Every returned value must appear in your resume text (ignoring line wraps and
+  hyphenation); anything else is left blank. The AI cannot add facts that are not
+  in your resume.
+- The result opens as an unsaved draft for your review, exactly like a rules parse.
+  If the request fails, Folio falls back to the rules parse and says so.
+
+Masking is best-effort. Saving your name and contact details in **Personal profile**
+makes it far more reliable, because those exact values are masked everywhere, in
+any formatting. Unusual layouts can still leave details unmasked, which is why the
+preview is always shown. To check a file without the app or an API key:
+
+```bash
+npm run -s redact:preview -- path/to/resume.pdf --profile "/path/to/Folio Data"
+```
+
 ## Existing browser data and JSON exports
 
 When Folio detects older browser-stored data absent from the selected folder,
@@ -102,10 +153,10 @@ JSON exports are not encrypted by Folio; treat them as private personal files.
 
 ## Parsing limits and development
 
-Parsing uses conservative rules, not an AI model. Company/title order, undated
-entries, complex PDF columns, and unfamiliar headings require review. Scanned PDFs
-need OCR, which is not included. No missing resume facts or personal answers are
-inferred. Browser autofill and cloud sync are future work.
+Without AI parsing, Folio uses conservative rules. Company/title order, undated
+entries, complex PDF columns, and unfamiliar headings require review. With either
+parser, scanned PDFs need OCR, which is not included, and no missing resume facts
+or personal answers are inferred. Browser autofill and cloud sync are future work.
 
 ```bash
 npm test
@@ -113,5 +164,20 @@ npm run build
 npm run format:check
 ```
 
-Tests use synthetic data and temporary folders. See `QA.md` for verified flows,
-`cloud.md` for architecture, and `AGENTS.md` / `CLAUDE.md` for agent conventions.
+Tests use synthetic data and temporary folders, and never call OpenRouter. See
+`QA.md` for verified flows, `cloud.md` for architecture, and `AGENTS.md` /
+`CLAUDE.md` for agent conventions.
+
+**Parser evaluation.** On 10 full-length benchmark PDFs, the rules parser got 19 of
+152 key fields right; Gemma got all 152. Details, caveats, and how the default model
+was chosen are in
+[experiments/reports/2026-10-24-llm-comparison](experiments/reports/2026-10-24-llm-comparison/README.md).
+To compare models yourself (requires a key; costs cents):
+
+```bash
+npm run compare:llm -- --models google/gemma-4-26b-a4b-it,anthropic/claude-haiku-5.5
+npm run bench:resume -- --models google/gemma-4-26b-a4b-it
+```
+
+See [experiments/README.md](experiments/README.md) for setup and the held-out test
+protocol.

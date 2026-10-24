@@ -34,7 +34,9 @@ JSON exports contain structured records; the full folder is the portable backup.
 ## Remaining phases
 
 1. More parser fixtures, especially multi-column PDFs and diverse date layouts.
-2. Optional user-authorized AI parsing with source grounding and mandatory review.
+2. ~~Optional user-authorized AI parsing with source grounding and mandatory review.~~
+   Done: OpenRouter via the local server (`server/llm-parse.js`, `server/redact.js`),
+   with a send preview, masked or full mode, and rules fallback.
 3. Browser extension with explicit activation and the same structured schema.
 4. Workday, then Greenhouse and Ashby adapters with real-form validation.
 5. Optional in-app revision recovery and deliberate retention/pruning controls.
